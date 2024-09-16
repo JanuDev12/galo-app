@@ -1,5 +1,11 @@
 function Sidebar() {
-  return <aside className="sidebar bg-red-600">sidebar</aside>;
+  return( 
+  
+  <aside className="sidebar bg-[--color-secondary]">
+    sidebar
+    </aside>
+
+  );
 }
 
 export default Sidebar
