@@ -11,12 +11,9 @@ function App() {
   return (
     <>
      <div className="layout">
-
       <Header />
       <Sidebar />
       <MainContent />
-    
-
      </div>
     </>
   )
