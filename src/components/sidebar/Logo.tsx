@@ -1,5 +1,3 @@
-import React from 'react'
-
 function Logo() {
   return (
     <a className="flex items-center gap-3 py-5 px-6" href="/">
