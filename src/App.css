@@ -28,3 +28,11 @@ body{
 .content{
     grid-area: main-content
 }
+
+.imgContainerButtons{
+    background: rgba(0, 0, 0, 0);
+}
+
+.imgContainerButtons:hover{
+    background: rgba(0, 0, 0, 0.5);
+}

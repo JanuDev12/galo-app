@@ -22,6 +22,7 @@ const buttonVariants = cva(
         link: "text-slate-900 underline-offset-4 hover:underline dark:text-slate-50",
         white:
           "text-[--color-secondary] bg-[--color-light-secondary] hover:bg-[--color-light-tertiary]",
+        transparent: "font-normal bg-transparent hover:bg-transparent",
       },
       size: {
         default: "h-10 px-4 py-2",

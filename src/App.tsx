@@ -11,7 +11,7 @@ function App() {
   return (
     <>
       <div className="h-screen">
-        <div className="layout h-full w-full">
+        <div className="layout h-full w-full ">
           <Header />
           <Sidebar />
           <MainContent />
