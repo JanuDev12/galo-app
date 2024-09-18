@@ -1,6 +1,8 @@
+import { useImageStore } from '@/store/image-store';
 import { Button } from '../ui/button'
 
 function ButtonFileUpload() {
+  const handleImageUploaded = useImageStore((state) => state.handleImageUploaded)
   return (
     <>
       <Button
@@ -41,7 +43,7 @@ function ButtonFileUpload() {
         multiple
         accept="image/*"
         className="opacity-0 absolute -z-50"
-        /* onChange={handleImageUploaded} */
+        onChange={void handleImageUploaded}
       ></input>
     </>
   );
