@@ -3,7 +3,7 @@ import ButtonFileUpload from "./ButtonFileUpload";
 
 function Header() {
   return (
-    <header className="header py-4 px-3 bg-[--color-secondary] flex items-center justify-between">
+    <header className="header py-3 px-3 bg-[--color-secondary] flex items-center justify-between">
       <div>
         <Input
           placeholder="Search in All Photos"

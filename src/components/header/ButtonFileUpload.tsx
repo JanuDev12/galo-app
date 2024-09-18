@@ -4,11 +4,10 @@ function ButtonFileUpload() {
   return (
     <>
       <Button
-        className="flex gap-2 relative cursor-pointer"
+        className="flex gap-2  px-2 relative cursor-pointer"
         size="sm"
         variant="white"
       >
-
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"

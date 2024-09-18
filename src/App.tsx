@@ -10,14 +10,15 @@ function App() {
 
   return (
     <>
-    
-     <div className="layout h-screen w-screen">
-      <Header />
-      <Sidebar />
-      <MainContent />
-     </div>
+      <div className="h-screen">
+        <div className="layout h-full w-full">
+          <Header />
+          <Sidebar />
+          <MainContent />
+        </div>
+      </div>
     </>
-  )
+  );
 }
 
 export default App
