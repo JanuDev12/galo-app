@@ -3,6 +3,12 @@ import { Button } from '../ui/button'
 
 function ButtonFileUpload() {
   const handleImageUploaded = useImageStore((state) => state.handleImageUploaded)
+
+  const handleOnChange =  (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleImageUploaded(event).catch((error) => {
+      console.error("Error handling image upload:", error);
+    });
+  };
   return (
     <>
       <Button
@@ -43,7 +49,7 @@ function ButtonFileUpload() {
         multiple
         accept="image/*"
         className="opacity-0 absolute -z-50"
-        onChange={void handleImageUploaded}
+        onChange={handleOnChange}
       ></input>
     </>
   );
