@@ -4,7 +4,10 @@ import './App.css'
 import "@fontsource-variable/onest";
 import Sidebar from './components/sidebar/Sidebar';
 import Header from './components/header/Header';
-import MainContent from './components/main-content/mainContent';
+import Content from './components/main-content/Content';
+import { Route, Routes } from 'react-router-dom';
+import Collections from './pages/Collections';
+import Artists from './pages/Artists';
 
 function App() {
 
@@ -14,7 +17,7 @@ function App() {
         <div className="layout h-full w-full ">
           <Header />
           <Sidebar />
-          <MainContent />
+          <Content />
         </div>
       </div>
     </>

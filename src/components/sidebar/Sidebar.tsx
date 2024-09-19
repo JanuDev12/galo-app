@@ -4,7 +4,7 @@ import SidebarItem from "./SidebarItem";
 
 function Sidebar() {
   return (
-    <aside className="sidebar bg-[--color-secondary] w-44 h-full">
+    <aside className="sidebar bg-[--color-secondary] w-48 h-full">
       <Logo />
       <nav className="px-3 py-4">
         <ul className="flex flex-col gap-1">
