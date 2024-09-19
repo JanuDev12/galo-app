@@ -1,11 +1,7 @@
-import Controls from '@/components/main-content/controls/Controls';
 import DropdownButton from '@/components/main-content/controls/DropdownButton';
 import Gallery from '@/components/main-content/Gallery';
 import Layout from '@/components/main-content/Layout';
 import { useImageStore } from '@/store/image-store';
-
-
-
 
 function AllPhotos() {
   const imagesLength = useImageStore((state) => state.images.length);
