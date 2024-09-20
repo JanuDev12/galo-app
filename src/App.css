@@ -36,3 +36,8 @@ body{
 .imgContainerButtons:hover{
     background: rgba(0, 0, 0, 0.5);
 }
+
+.dropdown-content:active ~ .containers,
+.containers:hover {
+  background-color: rgba(196, 19, 19, 0.5); /* Ajusta el color */
+}
