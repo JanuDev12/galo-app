@@ -3,6 +3,7 @@ import Collections from '../../pages/Collections';
 import Artists from '../../pages/Artists';
 import AllPhotos from '../../pages/AllPhotos';
 import CollectionName from '@/pages/CollectionName';
+import ArtistDetail from '@/pages/ArtistDetail';
 
 function Content() {
   
@@ -15,9 +16,9 @@ function Content() {
             <Route path="/collections" element={<Collections />} />
             <Route path="/artist" element={<Artists />} />
 
-            <Route path="/collections/:id" element={<CollectionName/>} />
+            <Route path="/collections/:id" element={<CollectionName />} />
+            <Route path="/artists/:artist" element={<ArtistDetail />} />
           </Routes>
-          
         </div>
       </div>
     </main>

@@ -1,4 +1,6 @@
 import Layout from '@/components/main-content/Layout';
+import { useImageStore } from '@/store/image-store';
+import { useNavigate } from 'react-router-dom';
 
 const artists = [
   {
@@ -48,7 +50,20 @@ const artists = [
   },
 ];
 
+interface Artist {
+  name: string;
+  worksCount: number;
+}
 function Artists() {
+
+  const { images } = useImageStore((state) => state);
+
+  const navigate = useNavigate();
+
+
+ const uniqueArtists = [...new Set(images.map((image) => image.artist))];
+
+
   return (
     <Layout
       title="Artists"
@@ -72,12 +87,12 @@ function Artists() {
         </svg>
       }
     >
-
       <div className="grid grid-cols-4 gap-x-10 gap-y-7">
-        {artists.map((artist) => (
+        {uniqueArtists.map((artist) => (
           <div
-            key={artist.name}
+            key={artist}
             className="p-4 bg-[--color-secondary] border border-[--color-gray] rounded  cursor-pointer flex  items-center gap-3"
+            onClick={() => navigate(`/artists/${artist}`)}
           >
             <div className=" rounded-2xl overflow-hidden">
               <svg
@@ -100,10 +115,10 @@ function Artists() {
 
             <div className="w-full flex items-center justify-between">
               <span className="font-semibold text-[--color-light] text-sm ">
-                {artist.name}
+                @{artist}
               </span>
               <p className="text-[--color-light-tertiary] text-xs">
-                {artist.worksCount} works
+                {images.filter((image) => image.artist === artist).length} works
               </p>
             </div>
           </div>
