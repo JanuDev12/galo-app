@@ -1,10 +1,21 @@
 import { Button } from '@/components/ui/button';
 import Layout from '@/components/main-content/Layout';
+import { useCollectionStore } from '@/store/collections-store';
 
 function Collections() {
 
+  const collections = useCollectionStore((state) => state.collections)
+  const createCollection = useCollectionStore((state) => state.createCollection)
+
+  const handleCreateCollection = () => {
+     const collectionName = prompt("Write name collection:");
+     if (collectionName) {
+       createCollection(collectionName);
+     }
+   };
+
   const rightHeader = (
-    <Button size="sm" variant="outline" className="flex gap-2 ">
+    <Button size="sm" variant="outline" className="flex gap-2 " onClick={handleCreateCollection}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"
@@ -25,6 +36,8 @@ function Collections() {
       New
     </Button>
   );
+
+ 
 
   return (
     <Layout
@@ -50,290 +63,49 @@ function Collections() {
       control={rightHeader}
     >
       <div className="py-2 flex gap-x-8 gap-y-16 flex-wrap">
-        <div className="max-w-52 max-h-36 cursor-pointer group">
-          <div className="flex gap-[2px] w-full h-full rounded-xl overflow-hidden relative">
-            <div className="w-full h-full">
-              <img
-                src="/placeholder.jpg"
-                alt="Img 1"
-                className="h-full w-full object-cover"
-              />
+        {collections.length === 0 ? (
+          <p>Not Collection created.</p>
+        ) : (
+          collections.map((collection) => (
+            <div
+              key={collection.id}
+              className="max-w-52 max-h-36 cursor-pointer group"
+            >
+              <div className="flex gap-[2px] w-full h-full rounded-xl overflow-hidden relative">
+                <div className="w-full h-full">
+                  <img
+                    src="/placeholder.jpg"
+                    alt="Img 1"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-[2px] w-1/2 h-full">
+                  <img
+                    src="/placeholder1.png"
+                    alt="Img 2"
+                    className="object-cover flex-1 "
+                  />
+                  <img
+                    src="/placeholder-2.jpg"
+                    alt="Img 3"
+                    className="object-cover flex-1"
+                  />
+                </div>
+
+                {/* background hover */}
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+
+              <div className="my-2 mx-1">
+                <span className="text-sm font-medium">{collection.name}</span>
+                <p className="text-xs text-[--color-gray-tertiary]">
+                  {collection.imagesCollected.length} photos
+                </p>
+              </div>
             </div>
-
-            <div className="flex flex-col gap-[2px] w-1/2 h-full">
-              <img
-                src="/placeholder1.png"
-                alt="Img 2"
-                className="object-cover flex-1 "
-              />
-              <img
-                src="/placeholder-2.jpg"
-                alt="Img 3"
-                className="object-cover flex-1"
-              />
-            </div>
-
-            {/* background hover */}
-            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-
-          <div className="my-2 mx-1">
-            <span className="text-sm font-medium">Collection name</span>
-            <p className="text-xs text-[--color-gray-tertiary]">12 photos</p>
-          </div>
-        </div>
-
-        <div className="max-w-52 max-h-36 cursor-pointer group relative">
-          <div className="flex gap-[2px] w-full h-full rounded-xl overflow-hidden">
-            <div className="w-full h-full">
-              <img
-                src="/placeholder1.png"
-                alt=""
-                className="h-full w-full object-cover"
-              />
-            </div>
-
-            <div className="flex flex-col gap-[2px] w-1/2 h-full">
-              <img
-                src="/placeholder.jpg"
-                alt=""
-                className="object-cover flex-1"
-              />
-              <img
-                src="/placeholder-2.jpg"
-                alt=""
-                className="object-cover flex-1"
-              />
-            </div>
-            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-
-          <div className="my-2 mx-1">
-            <span className="text-sm font-medium">Collection name</span>
-            <p className="text-xs text-[--color-gray-tertiary]">12 photos</p>
-          </div>
-        </div>
-
-        <div className="max-w-52 max-h-36 cursor-pointer group relative">
-          <div className="flex gap-[2px] w-full h-full rounded-xl overflow-hidden">
-            <div className="w-full h-full">
-              <img
-                src="/placeholder-2.jpg"
-                alt=""
-                className="h-full w-full object-cover"
-              />
-            </div>
-
-            <div className="flex flex-col gap-[2px] w-1/2 h-full">
-              <img
-                src="/placeholder1.png"
-                alt=""
-                className="object-cover flex-1"
-              />
-              <img
-                src="/placeholder.jpg"
-                alt=""
-                className="object-cover flex-1"
-              />
-            </div>
-            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-
-          <div className="my-2 mx-1">
-            <span className="text-sm font-medium">Collection name</span>
-            <p className="text-xs text-[--color-gray-tertiary]">12 photos</p>
-          </div>
-        </div>
-
-        <div className="max-w-52 max-h-36 cursor-pointer group">
-          <div className="flex gap-[2px] w-full h-full rounded-xl overflow-hidden relative">
-            <div className="w-full h-full">
-              <img
-                src="/placeholder.jpg"
-                alt="Img 1"
-                className="h-full w-full object-cover"
-              />
-            </div>
-
-            <div className="flex flex-col gap-[2px] w-1/2 h-full">
-              <img
-                src="/placeholder1.png"
-                alt="Img 2"
-                className="object-cover flex-1 "
-              />
-              <img
-                src="/placeholder-2.jpg"
-                alt="Img 3"
-                className="object-cover flex-1"
-              />
-            </div>
-
-            {/* background hover */}
-            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-
-          <div className="my-2 mx-1">
-            <span className="text-sm font-medium">Collection name</span>
-            <p className="text-xs text-[--color-gray-tertiary]">12 photos</p>
-          </div>
-        </div>
-
-        <div className="max-w-52 max-h-36 cursor-pointer group relative">
-          <div className="flex gap-[2px] w-full h-full rounded-xl overflow-hidden">
-            <div className="w-full h-full">
-              <img
-                src="/placeholder1.png"
-                alt=""
-                className="h-full w-full object-cover"
-              />
-            </div>
-
-            <div className="flex flex-col gap-[2px] w-1/2 h-full">
-              <img
-                src="/placeholder.jpg"
-                alt=""
-                className="object-cover flex-1"
-              />
-              <img
-                src="/placeholder-2.jpg"
-                alt=""
-                className="object-cover flex-1"
-              />
-            </div>
-            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-
-          <div className="my-2 mx-1">
-            <span className="text-sm font-medium">Collection name</span>
-            <p className="text-xs text-[--color-gray-tertiary]">12 photos</p>
-          </div>
-        </div>
-
-        <div className="max-w-52 max-h-36 cursor-pointer group relative">
-          <div className="flex gap-[2px] w-full h-full rounded-xl overflow-hidden">
-            <div className="w-full h-full">
-              <img
-                src="/placeholder-2.jpg"
-                alt=""
-                className="h-full w-full object-cover"
-              />
-            </div>
-
-            <div className="flex flex-col gap-[2px] w-1/2 h-full">
-              <img
-                src="/placeholder1.png"
-                alt=""
-                className="object-cover flex-1"
-              />
-              <img
-                src="/placeholder.jpg"
-                alt=""
-                className="object-cover flex-1"
-              />
-            </div>
-            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-
-          <div className="my-2 mx-1">
-            <span className="text-sm font-medium">Collection name</span>
-            <p className="text-xs text-[--color-gray-tertiary]">12 photos</p>
-          </div>
-        </div>
-
-        <div className="max-w-52 max-h-36 cursor-pointer group">
-          <div className="flex gap-[2px] w-full h-full rounded-xl overflow-hidden relative">
-            <div className="w-full h-full">
-              <img
-                src="/placeholder.jpg"
-                alt="Img 1"
-                className="h-full w-full object-cover"
-              />
-            </div>
-
-            <div className="flex flex-col gap-[2px] w-1/2 h-full">
-              <img
-                src="/placeholder1.png"
-                alt="Img 2"
-                className="object-cover flex-1 "
-              />
-              <img
-                src="/placeholder-2.jpg"
-                alt="Img 3"
-                className="object-cover flex-1"
-              />
-            </div>
-
-            {/* background hover */}
-            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-
-          <div className="my-2 mx-1">
-            <span className="text-sm font-medium">Collection name</span>
-            <p className="text-xs text-[--color-gray-tertiary]">12 photos</p>
-          </div>
-        </div>
-
-        <div className="max-w-52 max-h-36 cursor-pointer group relative">
-          <div className="flex gap-[2px] w-full h-full rounded-xl overflow-hidden">
-            <div className="w-full h-full">
-              <img
-                src="/placeholder1.png"
-                alt=""
-                className="h-full w-full object-cover"
-              />
-            </div>
-
-            <div className="flex flex-col gap-[2px] w-1/2 h-full">
-              <img
-                src="/placeholder.jpg"
-                alt=""
-                className="object-cover flex-1"
-              />
-              <img
-                src="/placeholder-2.jpg"
-                alt=""
-                className="object-cover flex-1"
-              />
-            </div>
-            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-
-          <div className="my-2 mx-1">
-            <span className="text-sm font-medium">Collection name</span>
-            <p className="text-xs text-[--color-gray-tertiary]">12 photos</p>
-          </div>
-        </div>
-
-        <div className="max-w-52 max-h-36 cursor-pointer group relative">
-          <div className="flex gap-[2px] w-full h-full rounded-xl overflow-hidden">
-            <div className="w-full h-full">
-              <img
-                src="/placeholder-2.jpg"
-                alt=""
-                className="h-full w-full object-cover"
-              />
-            </div>
-
-            <div className="flex flex-col gap-[2px] w-1/2 h-full">
-              <img
-                src="/placeholder1.png"
-                alt=""
-                className="object-cover flex-1"
-              />
-              <img
-                src="/placeholder.jpg"
-                alt=""
-                className="object-cover flex-1"
-              />
-            </div>
-            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-
-          <div className="my-2 mx-1">
-            <span className="text-sm font-medium">Collection name</span>
-            <p className="text-xs text-[--color-gray-tertiary]">12 photos</p>
-          </div>
-        </div>
+          ))
+        )}
       </div>
     </Layout>
   );
