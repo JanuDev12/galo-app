@@ -1,3 +1,4 @@
+import Gallery from '@/components/main-content/Gallery';
 import Layout from '@/components/main-content/Layout';
 import { useCollectionStore } from '@/store/collections-store';
 import { useImageStore } from '@/store/image-store';
@@ -51,9 +52,7 @@ function CollectionName() {
         }
         subControl={subHeader}
       >
-        <div>
-            <h1>Hola?</h1>
-        </div>
+        <Gallery images={collectionImages}/>
       </Layout>
     );
 }

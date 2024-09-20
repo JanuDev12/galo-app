@@ -1,4 +1,4 @@
-import { useImageStore } from "@/store/image-store";
+import { ImageItem, useImageStore } from "@/store/image-store";
 import { Masonry } from "masonic"
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
@@ -139,11 +139,15 @@ function MasonryCard({ data: { id, name, src, artist } }: MasonryCardProps) {
   );
 }  
    
- 
+ interface GalleryProps {
+   images: ImageItem[]; 
+ }
 
-const Gallery: React.FC = () => {
+const Gallery: React.FC<GalleryProps> = ({ images }) => {
+  
+  
   // Fetching images
-  const images = useImageStore((state) => state.images);
+  
   const fetchImages = useImageStore((state) => state.fetchImages);
 
   // handling the promise fetchImages

@@ -4,7 +4,7 @@ import Layout from '@/components/main-content/Layout';
 import { useImageStore } from '@/store/image-store';
 
 function AllPhotos() {
-  const imagesLength = useImageStore((state) => state.images.length);
+  const images = useImageStore((state) => state.images);
   const controls = (
     <div className="flex gap-2">
       <DropdownButton
@@ -74,7 +74,7 @@ function AllPhotos() {
   );
   const subControls = (
     <span className="text-[--color-gray-tertiary] text-sm">
-      {imagesLength} photos, 0 videos
+      {images.length} photos, 0 videos
     </span>
   );
   return (
@@ -103,7 +103,7 @@ function AllPhotos() {
         control={controls}
         subControl={subControls}
       >
-        <Gallery />
+        <Gallery images={images}/>
       </Layout>
   );
 }
