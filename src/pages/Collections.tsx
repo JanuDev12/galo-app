@@ -1,8 +1,11 @@
 import { Button } from '@/components/ui/button';
 import Layout from '@/components/main-content/Layout';
 import { useCollectionStore } from '@/store/collections-store';
+import { useNavigate } from 'react-router-dom';
 
 function Collections() {
+
+  const navigate = useNavigate();
 
   const collections = useCollectionStore((state) => state.collections)
   const createCollection = useCollectionStore((state) => state.createCollection)
@@ -70,6 +73,7 @@ function Collections() {
             <div
               key={collection.id}
               className="max-w-52 max-h-36 cursor-pointer group"
+              onClick={() => navigate(`/collections/${collection.id}`)}
             >
               <div className="flex gap-[2px] w-full h-full rounded-xl overflow-hidden relative">
                 <div className="w-full h-full">

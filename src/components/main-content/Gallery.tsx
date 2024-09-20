@@ -1,8 +1,9 @@
 import { useImageStore } from "@/store/image-store";
 import { Masonry } from "masonic"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel,  DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { useCollectionStore } from "@/store/collections-store";
 
 interface MasonryCardProps {
   data: {
@@ -13,8 +14,53 @@ interface MasonryCardProps {
   }
 }
 
+
+
+
 function MasonryCard({ data: { id, name, src, artist } }: MasonryCardProps) {
-  
+  const collections = useCollectionStore((state) => state.collections);
+  const addImagetoCollection = useCollectionStore(
+    (state) => state.addImageToCollection
+  );
+  const removeImageFromCollection = useCollectionStore(
+    (state) => state.removeImageFromCollection
+  );
+  const [selectedCollections, setSelectedCollections] = useState<number[]>([]);
+
+  //COLLECTIONS
+
+  function handleToggleImageCollection(
+    imageId: number,
+    imageUrl: string,
+    collectionId: number,
+    isAdded: boolean
+  ) {
+    if (isAdded) {
+      removeImageFromCollection(collectionId, imageId);
+    } else {
+      addImagetoCollection(collectionId, imageId, imageUrl);
+    }
+  }
+
+  // Triggers when a collection is selected o deselected
+  function handleSelectCollection(collectionId: number) {
+    const isAdded = selectedCollections.includes(collectionId);
+    const updatedCollections = isAdded
+      ? selectedCollections.filter((colId) => colId !== collectionId)
+      : [...selectedCollections, collectionId];
+
+    setSelectedCollections(updatedCollections);
+    handleToggleImageCollection(id, src, collectionId, isAdded);
+  }
+
+  // Updating selected Collections when the component is mounted
+  useEffect(() => {
+    const imageCollections = collections
+      .filter((collection) => collection.imagesCollected.some((image) => image.id === id))
+      .map((collection) => collection.id);
+    setSelectedCollections(imageCollections);
+  }, [collections, id]);
+
   return (
     <div className="relative group">
       <img src={src} alt={name} className="rounded-xl shadow w-full" />
@@ -42,10 +88,25 @@ function MasonryCard({ data: { id, name, src, artist } }: MasonryCardProps) {
           <DropdownMenuContent className="w-40 rounded-2xl px-3 border-transparent bg-white/10 backdrop-blur z-auto">
             <DropdownMenuLabel>Save</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>Collection 1</DropdownMenuItem>
-              <DropdownMenuItem>Collection 2</DropdownMenuItem>
-            </DropdownMenuGroup>
+            <div className="flex flex-col gap-2">
+              {collections.map((collection) => {
+                const isAdded = selectedCollections.includes(collection.id);
+                return (
+                  <label key={collection.id}>
+                    {/*  Añadimos la imagen al cambiar de selección */}
+                    <input
+                      type="checkbox"
+                      value={collection.id}
+                      onChange={() => handleSelectCollection(collection.id)}
+                      checked={isAdded}
+                      className="input"
+                    />
+                    <span className="custom-checkbox"></span>
+                    {collection.name} {/* {isAdded && "(Added)"} */}
+                  </label>
+                );
+              })}
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -85,20 +146,21 @@ const Gallery: React.FC = () => {
   const images = useImageStore((state) => state.images);
   const fetchImages = useImageStore((state) => state.fetchImages);
 
+  // handling the promise fetchImages
   useEffect(() => {
-    // handling the promise fetchImages
-    fetchImages().catch(console.error); // Manejar errores de fetchImages
+    fetchImages().catch(console.error); 
   }, [fetchImages]);
 
+  
   return (
-      <Masonry
-        items={images}
-        render={MasonryCard}
-        columnGutter={16}
-        columnWidth={172}
-        overscanBy={5}
-        maxColumnCount={4}
-      ></Masonry>
+    <Masonry
+      items={images}
+      render={MasonryCard}
+      columnGutter={16}
+      columnWidth={172}
+      overscanBy={5}
+      maxColumnCount={4}
+    ></Masonry>
   );
 }
 
@@ -134,3 +196,14 @@ export default Gallery
           </svg>
         </Button> */
    }
+
+
+   /*  <div key={collection.id}>
+                    <RadioGroupItem
+                      value={collection.name}
+                      id={collection.name}
+                      checked={isAdded}
+                      onChange={() => handleSelectCollection(collection.id)}
+                    />
+                    <label htmlFor={collection.name}>{collection.name}</label>
+                  </div> */

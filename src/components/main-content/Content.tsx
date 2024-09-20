@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import Collections from '../../pages/Collections';
 import Artists from '../../pages/Artists';
 import AllPhotos from '../../pages/AllPhotos';
+import CollectionName from '@/pages/CollectionName';
 
 function Content() {
   
@@ -13,6 +14,8 @@ function Content() {
             <Route path="/" element={<AllPhotos />} />
             <Route path="/collections" element={<Collections />} />
             <Route path="/artist" element={<Artists />} />
+
+            <Route path="/collections/:id" element={<CollectionName/>} />
           </Routes>
           
         </div>
