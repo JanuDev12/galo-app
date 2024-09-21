@@ -33,7 +33,13 @@ export const getImagesFromDB = async () => {
     }))
 }
 
+/* export const getImagesFromDB = async () => {
+  const db = await openDB(DB_NAME, DB_VERSION);
+  return db.getAll(STORE_NAME) as ImageItem[];
+}; */
+
 export const addImageToDB = async (imageSrc: string, name: string, createdDate: number, lastModified: number, artist: string) => {
     const db = await openDB(DB_NAME, DB_VERSION);
     return db.add(STORE_NAME, { id: Date.now(), name, src: imageSrc, createdDate, lastModified, artist})
 }
+

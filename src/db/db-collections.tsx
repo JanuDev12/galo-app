@@ -1,4 +1,4 @@
-/* import { ImageItem } from "@/store/image-store"; */
+import { Collection } from "@/store/collections-store";
 import { openDB } from "idb";
 
 const DB_NAME = "collectionsDB";
@@ -18,4 +18,28 @@ export const initDB = async () => {
     },
   });
   return db;
+};
+
+export const getCollectionsFromDB = async () => {
+  const db = await openDB(DB_NAME, DB_VERSION);
+  const collections = await db.getAll(STORE_NAME) as Collection[];
+  return collections;
+}
+
+export const addCollectionToDB = async (name: string) => {
+  const db = await openDB(DB_NAME, DB_VERSION);
+  return db.add(STORE_NAME, { name, imagesCollected: [] });
+};
+
+export const deleteCollectionFromDB = async (collectionId: number) => {
+  const db = await openDB(DB_NAME, DB_VERSION);
+  return db.delete(STORE_NAME, collectionId);
+};
+
+export const updateCollectionInDB = async (
+  collectionId: number,
+  updatedCollection: Collection
+) => {
+  const db = await openDB(DB_NAME, DB_VERSION);
+  return db.put(STORE_NAME, { ...updatedCollection, id: collectionId });
 };

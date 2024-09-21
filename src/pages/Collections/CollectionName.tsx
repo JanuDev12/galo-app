@@ -3,20 +3,11 @@ import ControlButtons from '@/components/main-content/header-controls/ControlBut
 import HeaderInfo from '@/components/main-content/header-controls/HeaderInfo';
 import Layout from '@/components/main-content/Layout';
 import { useCollectionStore } from '@/store/collections-store';
-import { useImageStore } from '@/store/image-store';
-import { useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom'
+import {  useParams } from 'react-router-dom'
 
 function CollectionName() {
     const {id} = useParams<{id: string }>();
     const collections = useCollectionStore((state) => state.collections);
-    const images = useImageStore((state) => state.images)
-  
-     const location = useLocation();
-
-     // Detectar si es la página de colección
-     const isCollectionPage = location.pathname.includes("/collections");
-
 
     //Searching the collection ID
     const actualCollection = collections.find((col) => col.id === Number(id));

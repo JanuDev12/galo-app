@@ -1,7 +1,8 @@
 import { create } from "zustand"
+import { addCollectionToDB, getCollectionsFromDB, initDB, updateCollectionInDB } from "@/db/db-collections";
 import { ImageItem } from "./image-store";
 
- interface Collection {
+export interface Collection {
     id: number,
     name: string,
     imagesCollected: ImageItem[]
@@ -9,7 +10,11 @@ import { ImageItem } from "./image-store";
 
 interface CollectionStore {
   collections: Collection[];
-  setImagesCollections: (collectionId: number, newImagesCollection: ImageItem[]) => void;
+  getCollections: () => Promise<void>;
+  setImagesCollections: (
+    collectionId: number,
+    newImagesCollection: ImageItem[]
+  ) => void;
   createCollection: (name: string) => void;
   addImageToCollection: (
     collectionId: number,
@@ -27,6 +32,23 @@ interface CollectionStore {
 export const useCollectionStore = create<CollectionStore>((set) => ({
   collections: [],
 
+  getCollections: async () => {
+    try {
+      await initDB(); // Iniciar base de datos de IndexedDB
+      const storedCollections: Collection[] = await getCollectionsFromDB();
+
+      set({
+        collections: storedCollections.map((col) => ({
+          id: col.id,
+          name: col.name,
+          imagesCollected: col.imagesCollected || [], // Si no tiene imágenes, asigna un array vacío
+        })),
+      });
+    } catch (error) {
+      console.error("Error fetching collections from IndexedDB:", error);
+    }
+  },
+
   setImagesCollections: (collectionId, newImagesCollection) =>
     set((state) => ({
       collections: state.collections.map((collection) =>
@@ -35,7 +57,7 @@ export const useCollectionStore = create<CollectionStore>((set) => ({
           : collection
       ),
     })),
-  createCollection: (name) =>
+  /* createCollection: (name) =>
     set((state) => ({
       collections: [
         ...state.collections,
@@ -45,51 +67,84 @@ export const useCollectionStore = create<CollectionStore>((set) => ({
           imagesCollected: [],
         },
       ],
-    })),
-  addImageToCollection: (
+    })), */
+  createCollection: async (name) => {
+    const newCollection = {
+      id: Date.now(),
+      name,
+      imagesCollected: [],
+    };
+
+    // Agregar colección a IndexedDB
+    await addCollectionToDB(newCollection.name);
+
+    set((state) => ({
+      collections: [...state.collections, newCollection],
+    }));
+  },
+  addImageToCollection: async (
     collectionId,
-    imageIds,
+    imageId,
     imageName,
     imageUrl,
     lastModified,
     artist,
     tags
-  ) =>
-    set((state) => ({
-      collections: state.collections.map((collection) =>
-        collection.id === collectionId
-          ? {
-              ...collection,
-              imagesCollected: [
-                ...collection.imagesCollected,
-                {
-                  id: imageIds,
-                  name: imageName,
-                  src: imageUrl,
-                  createdDate: collection.imagesCollected.length + 1,
-                  lastModified,
-                  artist,
-                  tags: tags,
-                },
-              ],
-            }
-          : collection
-      ),
-    })),
+  ) => {
+    set((state) => {
+      const updatedCollections = state.collections.map((collection) => {
+        if (collection.id === collectionId) {
+          const newImage = {
+            id: imageId,
+            name: imageName,
+            src: imageUrl,
+            createdDate: collection.imagesCollected.length + 1, // Este valor es el orden
+            lastModified,
+            artist,
+            tags: tags,
+          };
 
-  removeImageFromCollection: (collectionId, imageId) =>
-    set((state) => ({
-      collections: state.collections.map((collection) =>
-        collection.id === collectionId
-          ? {
-              ...collection,
-              imagesCollected: collection.imagesCollected.filter(
-                (image) => image.id !== imageId
-              ),
-            }
-          : collection
-      ),
-    })),
+          const updatedCollection = {
+            ...collection,
+            imagesCollected: [...collection.imagesCollected, newImage],
+          };
+
+          // Actualizar IndexedDB con la nueva colección modificada
+          updateCollectionInDB(collectionId, updatedCollection);
+
+          return updatedCollection;
+        }
+        return collection;
+      });
+
+      return { collections: updatedCollections };
+    });
+  },
+
+  removeImageFromCollection: async (collectionId, imageId) => {
+    set((state) => {
+      const updatedCollections = state.collections.map((collection) => {
+        if (collection.id === collectionId) {
+          const updatedImages = collection.imagesCollected.filter(
+            (image) => image.id !== imageId
+          );
+
+          const updatedCollection = {
+            ...collection,
+            imagesCollected: updatedImages,
+          };
+
+          // Actualizar IndexedDB con la colección modificada
+          updateCollectionInDB(collectionId, updatedCollection);
+
+          return updatedCollection;
+        }
+        return collection;
+      });
+
+      return { collections: updatedCollections };
+    });
+  },
 
   deleteCollection: (collectionId) =>
     set((state) => ({
@@ -98,3 +153,4 @@ export const useCollectionStore = create<CollectionStore>((set) => ({
       ),
     })),
 }));
+

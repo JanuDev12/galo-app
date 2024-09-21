@@ -2,25 +2,33 @@ import { Button } from '@/components/ui/button';
 import Layout from '@/components/main-content/Layout';
 import { useCollectionStore } from '@/store/collections-store';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 function Collections() {
-
   const navigate = useNavigate();
 
-  const collections = useCollectionStore((state) => state.collections)
-  const createCollection = useCollectionStore((state) => state.createCollection)
+  const collections = useCollectionStore((state) => state.collections);
+
+  const createCollection = useCollectionStore(
+    (state) => state.createCollection
+  );
 
   const placeholderImage = "/placeholder.jpg";
 
   const handleCreateCollection = () => {
-     const collectionName = prompt("Write name collection:");
-     if (collectionName) {
-       createCollection(collectionName);
-     }
-   };
+    const collectionName = prompt("Write name collection:");
+    if (collectionName) {
+      createCollection(collectionName);
+    }
+  };
 
   const rightHeader = (
-    <Button size="sm" variant="outline" className="flex gap-2 " onClick={handleCreateCollection}>
+    <Button
+      size="sm"
+      variant="outline"
+      className="flex gap-2 "
+      onClick={handleCreateCollection}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"
@@ -42,7 +50,14 @@ function Collections() {
     </Button>
   );
 
- 
+  // Fetching images
+
+  const getCollections = useCollectionStore((state) => state.getCollections);
+
+  // handling the promise fetchImages
+  useEffect(() => {
+    getCollections().catch(console.error);
+  }, []);
 
   return (
     <Layout
@@ -72,10 +87,11 @@ function Collections() {
           <p>Not Collection created.</p>
         ) : (
           collections.map((collection) => {
-             // Getting images to show 
-            const imagesToShow =  collection.imagesCollected.slice(1, 3) 
-            const firstImageToShow = collection.imagesCollected[0] || placeholderImage;
-            
+            // Getting images to show
+            const imagesToShow = collection.imagesCollected.slice(1, 3);
+            const firstImageToShow =
+              collection.imagesCollected[0] || placeholderImage;
+
             return (
               <div
                 key={collection.id}
@@ -100,8 +116,6 @@ function Collections() {
                         className="object-cover h-1/2  "
                       />
                     ))}
-
-                    
                   </div>
 
                   {/* background hover */}
@@ -115,7 +129,8 @@ function Collections() {
                   </p>
                 </div>
               </div>
-            );})
+            );
+          })
         )}
       </div>
     </Layout>
