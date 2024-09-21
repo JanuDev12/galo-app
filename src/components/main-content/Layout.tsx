@@ -3,12 +3,12 @@ import React from "react";
 interface LayoutProps {
   title: string;
   icon: React.ReactElement<SVGElement>;
-  control?: React.ReactNode;
-  subControl?: React.ReactNode;
+  pageHeader?: React.ReactNode;
+  info?: React.ReactNode;
   children: React.ReactNode;
 }
 
-function Layout({ title, icon, control, subControl, children }: LayoutProps) {
+function Layout({ title, icon, pageHeader, info, children }: LayoutProps) {
   return (
     <>
       <div className="px-2 mt-2 mb-4">
@@ -18,9 +18,9 @@ function Layout({ title, icon, control, subControl, children }: LayoutProps) {
             <span>{title}</span>
           </div>
 
-          {control}
+          {pageHeader}
         </div>
-         {subControl}
+         {info}
       </div>
       <div>{children}</div>
     </>

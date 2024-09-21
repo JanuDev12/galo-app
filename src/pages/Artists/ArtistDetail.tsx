@@ -1,4 +1,6 @@
 import Gallery from '@/components/main-content/Gallery';
+import ControlButtons from '@/components/main-content/header-controls/ControlButtons';
+import HeaderInfo from '@/components/main-content/header-controls/HeaderInfo';
 import Layout from '@/components/main-content/Layout'
 import { useImageStore } from '@/store/image-store';
 import { useParams } from 'react-router-dom'
@@ -11,11 +13,7 @@ function ArtistDetail() {
   // filter images for artist selected
   const artistImages = images.filter(image => image.artist === artist)
 
-   const subHeader = (
-     <span className="text-[--color-gray-tertiary] text-sm">
-       {artistImages.length} photos, 0 videos
-     </span>
-   );
+  const controls = <ControlButtons images={images} />;
 
   return (
     <Layout
@@ -39,9 +37,10 @@ function ArtistDetail() {
           <path d="M18 22l3.35 -3.284a2.143 2.143 0 0 0 .005 -3.071a2.242 2.242 0 0 0 -3.129 -.006l-.224 .22l-.223 -.22a2.242 2.242 0 0 0 -3.128 -.006a2.143 2.143 0 0 0 -.006 3.071l3.355 3.296z" />
         </svg>
       }
-      subControl={subHeader}
+      pageHeader={controls}
+      info={<HeaderInfo countPhotos={artistImages.length} />}
     >
-        <Gallery images={artistImages}/>
+      <Gallery images={artistImages} />
     </Layout>
   );
 }

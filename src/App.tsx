@@ -6,8 +6,8 @@ import Sidebar from './components/sidebar/Sidebar';
 import Header from './components/header/Header';
 import Content from './components/main-content/Content';
 import { Route, Routes } from 'react-router-dom';
-import Collections from './pages/Collections';
-import Artists from './pages/Artists';
+import Collections from './pages/Collections/Collections';
+import Artists from './pages/Artists/Artists';
 
 function App() {
 

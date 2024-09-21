@@ -1,9 +1,9 @@
 import { Route, Routes } from 'react-router-dom';
-import Collections from '../../pages/Collections';
-import Artists from '../../pages/Artists';
-import AllPhotos from '../../pages/AllPhotos';
-import CollectionName from '@/pages/CollectionName';
-import ArtistDetail from '@/pages/ArtistDetail';
+import Collections from '../../pages/Collections/Collections';
+import Artists from '../../pages/Artists/Artists';
+import AllPhotos from '../../pages/AllPhotos/AllPhotos';
+import CollectionName from '@/pages/Collections/CollectionName';
+import ArtistDetail from '@/pages/Artists/ArtistDetail';
 
 function Content() {
   

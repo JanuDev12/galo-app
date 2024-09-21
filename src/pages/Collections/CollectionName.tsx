@@ -1,4 +1,6 @@
 import Gallery from '@/components/main-content/Gallery';
+import ControlButtons from '@/components/main-content/header-controls/ControlButtons';
+import HeaderInfo from '@/components/main-content/header-controls/HeaderInfo';
 import Layout from '@/components/main-content/Layout';
 import { useCollectionStore } from '@/store/collections-store';
 import { useImageStore } from '@/store/image-store';
@@ -22,13 +24,7 @@ function CollectionName() {
     //Filter images belong in the collection
     const collectionImages = images.filter((image) => collectionImageIds.includes(image.id))
 
-
-    const subHeader = (
-      <span className="text-[--color-gray-tertiary] text-sm">
-        {collectionImages.length} photos, 0 videos
-      </span>
-    );
-
+    const controls = <ControlButtons images={images} />;
     return (
       <Layout
         title={actualCollection.name}
@@ -50,9 +46,10 @@ function CollectionName() {
             <path d="M17 17v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2h2" />
           </svg>
         }
-        subControl={subHeader}
+        pageHeader={controls}
+        info={<HeaderInfo countPhotos={collectionImages.length} />}
       >
-        <Gallery images={collectionImages}/>
+        <Gallery images={collectionImages} />
       </Layout>
     );
 }
