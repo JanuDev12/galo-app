@@ -10,14 +10,16 @@ interface MasonryCardProps {
     id: number;
     name: string;
     src: string;
-    artist: string
+    lastModified: number,
+    artist: string,
+    tags: string[]
   }
 }
 
 
 
 
-function MasonryCard({ data: { id, name, src, artist } }: MasonryCardProps) {
+function MasonryCard({ data: { id, name, src, lastModified, artist, tags } }: MasonryCardProps) {
   const collections = useCollectionStore((state) => state.collections);
   const addImagetoCollection = useCollectionStore(
     (state) => state.addImageToCollection
@@ -31,14 +33,26 @@ function MasonryCard({ data: { id, name, src, artist } }: MasonryCardProps) {
 
   function handleToggleImageCollection(
     imageId: number,
+    imageName: string,
     imageUrl: string,
+    imageDate: number,
+    tags: string[],
     collectionId: number,
+    artist: string,
     isAdded: boolean
   ) {
     if (isAdded) {
       removeImageFromCollection(collectionId, imageId);
     } else {
-      addImagetoCollection(collectionId, imageId, imageUrl);
+      addImagetoCollection(
+        collectionId,
+        imageId,
+        imageName,
+        imageUrl,
+        imageDate,
+        artist,
+        tags
+      );
     }
   }
 
@@ -50,7 +64,7 @@ function MasonryCard({ data: { id, name, src, artist } }: MasonryCardProps) {
       : [...selectedCollections, collectionId];
 
     setSelectedCollections(updatedCollections);
-    handleToggleImageCollection(id, src, collectionId, isAdded);
+    handleToggleImageCollection(id, name, src, lastModified , tags, collectionId, artist, isAdded);
   }
 
   // Updating selected Collections when the component is mounted
@@ -153,7 +167,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
   // handling the promise fetchImages
   useEffect(() => {
     fetchImages().catch(console.error); 
-  }, [fetchImages]);
+  }, []);
 
   
   return (

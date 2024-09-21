@@ -8,7 +8,7 @@ export interface ImageItem {
     createdDate: number,
     lastModified: number,
     artist: string,
-    tags: string[]
+    tags: string[],
 }
 
 interface ImageStore {
@@ -39,7 +39,7 @@ export const useImageStore = create<ImageStore>((set, get) => ({
                     createdDate: image.createdDate,
                     lastModified: image.lastModified || Date.now(),
                     artist: image.artist,
-                    tags: [""]
+                    tags: [""],
                 })),
             });
         } catch (error) {

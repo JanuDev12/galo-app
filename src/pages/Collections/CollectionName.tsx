@@ -4,12 +4,19 @@ import HeaderInfo from '@/components/main-content/header-controls/HeaderInfo';
 import Layout from '@/components/main-content/Layout';
 import { useCollectionStore } from '@/store/collections-store';
 import { useImageStore } from '@/store/image-store';
-import { useParams } from 'react-router-dom'
+import { useEffect } from 'react';
+import { useLocation, useParams } from 'react-router-dom'
 
 function CollectionName() {
     const {id} = useParams<{id: string }>();
     const collections = useCollectionStore((state) => state.collections);
     const images = useImageStore((state) => state.images)
+  
+     const location = useLocation();
+
+     // Detectar si es la página de colección
+     const isCollectionPage = location.pathname.includes("/collections");
+
 
     //Searching the collection ID
     const actualCollection = collections.find((col) => col.id === Number(id));
@@ -18,13 +25,16 @@ function CollectionName() {
         return <p>Collection Not Found</p>
     }
 
-    // Getting the ImageId in the collection
-    const collectionImageIds = actualCollection.imagesCollected.map((image) => image.id)
+   // Getting images belong in the collection
+      const collectionImages = actualCollection.imagesCollected;
 
-    //Filter images belong in the collection
-    const collectionImages = images.filter((image) => collectionImageIds.includes(image.id))
-
-    const controls = <ControlButtons images={images} />;
+    const controls = (
+      <ControlButtons
+        images={collectionImages}
+        collectionId={actualCollection.id}
+        isCollectionPage={true}
+      />
+    );
     return (
       <Layout
         title={actualCollection.name}
@@ -46,7 +56,7 @@ function CollectionName() {
             <path d="M17 17v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2h2" />
           </svg>
         }
-        pageHeader={controls}
+         pageHeader={controls} 
         info={<HeaderInfo countPhotos={collectionImages.length} />}
       >
         <Gallery images={collectionImages} />

@@ -8,13 +8,8 @@ function AllPhotos() {
   const images = useImageStore((state) => state.images);
   
   const controls = (
-    <ControlButtons images={images}/>
+    <ControlButtons images={images} />
   );
-  /* const subControls = (
-    <span className="text-[--color-gray-tertiary] text-sm">
-      {images.length} photos, 0 videos
-    </span>
-  ); */
   return (
       <Layout
         title="All Photos"

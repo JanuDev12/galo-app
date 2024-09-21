@@ -1,14 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useCollectionStore } from "@/store/collections-store";
 import { ImageItem, useImageStore } from "@/store/image-store";
 import { useEffect, useMemo, useState } from "react";
 
 interface ControlButtonsProps {
   images: ImageItem[];
+  collectionId?: number,
+  isCollectionPage?:boolean,
 }
 
-function ControlButtons({images}: ControlButtonsProps) {
+function ControlButtons({images, collectionId, isCollectionPage, }: ControlButtonsProps) {
   const setImages = useImageStore((state) => state.setImages);
+  const setImagesCollections = useCollectionStore((state) => state.setImagesCollections)
 
   const [order, setOrder] = useState("date-c");
   const [sortBy, setSortBy] = useState("asc");
@@ -16,16 +20,23 @@ function ControlButtons({images}: ControlButtonsProps) {
   const [layout, setLayout] = useState("masonry");
   const [size, setSize] = useState("large");
 
+ 
+
   const sortedImages = useMemo(() => {
     const sorted = [...images];
+
+
 
     // Order by (name, date, dateCreated)
     if (order === "name") {
       sorted.sort((a, b) => a.name.localeCompare(b.name));
+      console.log("ordenado por nombre" ,sorted);
     } else if (order === "date-m") {
-      sorted.sort((a, b) => (b.lastModified || 0) - (a.lastModified || 0));
+      sorted.sort((a, b) => (b.lastModified ) - (a.lastModified ));
+      console.log("ordenado por fecha de modificacion", sorted);
     } else if (order === "date-c") {
-      sorted.sort((a, b) => (b.createdDate || 0) - (a.createdDate || 0));
+      sorted.sort((a, b) => (b.createdDate ) - (a.createdDate ));
+      console.log("ordenado por fecha de creacion", sorted);
     }
 
     // Order by (Ascending, Descending)
@@ -34,7 +45,7 @@ function ControlButtons({images}: ControlButtonsProps) {
     }
 
     return sorted;
-  }, [sortBy, order, images]);
+  }, [ sortBy, order, images]);
 
   // Comparing if sortedImages are different of actualImages
   useEffect(() => {
@@ -45,7 +56,19 @@ function ControlButtons({images}: ControlButtonsProps) {
     if (imagesChanged) {
       setImages(sortedImages);
     }
-  }, [sortedImages, images, setImages]);
+
+    if (isCollectionPage && imagesChanged) {
+       if (collectionId !== undefined) {
+         setImagesCollections(collectionId, sortedImages);
+       } else {
+         console.error("Collection ID is undefined.");
+       }
+    }
+
+    console.log(sortedImages)
+  }, [sortedImages, images, setImages, isCollectionPage, setImagesCollections, collectionId]);
+
+
 
   return (
     <div className="flex gap-2">
