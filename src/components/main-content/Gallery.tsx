@@ -41,6 +41,7 @@ function MasonryCard({ data: { id, name, src, lastModified, artist, tags } }: Ma
   );
 
   const addTagToImage = useImageStore((state) => state.addTagToImage);
+  const deleteImage = useImageStore((state) => state.deleteImage)
 
   const [selectedCollections, setSelectedCollections] = useState<number[]>([]);
 
@@ -98,6 +99,10 @@ function MasonryCard({ data: { id, name, src, lastModified, artist, tags } }: Ma
 
 
   //COLLECTIONS
+
+  function handleDeleteImage(imageId: number) {
+    deleteImage(imageId)
+  }
 
   function handleToggleImageCollection(
     imageId: number,
@@ -286,7 +291,12 @@ function MasonryCard({ data: { id, name, src, lastModified, artist, tags } }: Ma
               </div>
 
               <DialogFooter className="justify-between mt-6">
-                <Button variant="destructive">Delete</Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => handleDeleteImage(id)}
+                >
+                  Delete
+                </Button>
                 <Button variant="white"> Save Changes</Button>
               </DialogFooter>
             </DialogContent>

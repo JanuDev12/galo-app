@@ -63,3 +63,9 @@ export const updateImageInDB = async (image: ImageItem) => {
     const db = await openDB(DB_NAME, DB_VERSION);
     return db.put(STORE_NAME, image); // Utiliza put para actualizar o añadir si no existe
 };
+
+export const deleteImageFromDB = async (imageId: number) => {
+  const db = await openDB(DB_NAME, DB_VERSION);
+  console.log("se esta eliminando confia en mi" , imageId)
+  return db.delete(STORE_NAME, imageId);
+};

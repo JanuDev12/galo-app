@@ -1,4 +1,4 @@
-import { addImageToDB, getImagesFromDB, updateImageInDB, initDB } from "@/db/db-image";
+import { addImageToDB, getImagesFromDB, updateImageInDB, deleteImageFromDB , initDB } from "@/db/db-image";
 import {create} from "zustand"
 
 export interface ImageItem {
@@ -19,6 +19,9 @@ interface ImageStore {
     event: React.ChangeEvent<HTMLInputElement>
   ) => Promise<void>;
   addTagToImage: (imageId: number, tag: string) => Promise<void>;
+  deleteImage: (imageId: number) => (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => void;
 }
 
 export const useImageStore = create<ImageStore>((set, get) => ({
@@ -120,8 +123,6 @@ export const useImageStore = create<ImageStore>((set, get) => ({
     }
   },
 
-
-
   addTagToImage: async (imageId: number, tag: string) => {
     const { images } = get();
 
@@ -142,4 +143,19 @@ export const useImageStore = create<ImageStore>((set, get) => ({
     // Actualiza el estado global
     set({ images: updatedImages });
   },
+  deleteImage: async (imageId) =>{
+     try {
+       // Llama a la función para eliminar la imagen de la base de datos
+       await deleteImageFromDB(imageId);
+
+       // Si la eliminación es exitosa, actualiza el estado global
+       set((state) => ({
+         images: state.images.filter((image) => image.id !== imageId),
+       }));
+     } catch (error) {
+       console.error("Error al eliminar la imagen de la base de datos:", error);
+     }
+
+  }
+    
 }));
