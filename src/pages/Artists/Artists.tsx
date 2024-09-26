@@ -2,66 +2,13 @@ import Layout from '@/components/main-content/Layout';
 import { useImageStore } from '@/store/image-store';
 import { useNavigate } from 'react-router-dom';
 
-const artists = [
-  {
-    name: "@Unknown",
-    worksCount: 15,
-    latestWorks: [
-      { image: "/placeholder.jpg" },
-      { image: "/placeholder-2.jpg" },
-      { image: "/placeholder1.png" },
-    ],
-  },
-  {
-    name: "@Falvie",
-    worksCount: 22,
-    latestWorks: [
-      { image: "/placeholder.jpg" },
-      { image: "/placeholder-2.jpg" },
-      { image: "/placeholder1.png" },
-    ],
-  },
-  {
-    name: "@KatuKint",
-    worksCount: 52,
-    latestWorks: [
-      { image: "/placeholder.jpg" },
-      { image: "/placeholder-2.jpg" },
-      { image: "/placeholder1.png" },
-    ],
-  },
-  {
-    name: "@KatuKint",
-    worksCount: 52,
-    latestWorks: [
-      { image: "/placeholder.jpg" },
-      { image: "/placeholder-2.jpg" },
-      { image: "/placeholder1.png" },
-    ],
-  },
-  {
-    name: "@Sed",
-    worksCount: 25,
-    latestWorks: [
-      { image: "/placeholder.jpg" },
-      { image: "/placeholder-2.jpg" },
-      { image: "/placeholder1.png" },
-    ],
-  },
-];
-
-interface Artist {
-  name: string;
-  worksCount: number;
-}
 function Artists() {
 
   const { images } = useImageStore((state) => state);
 
   const navigate = useNavigate();
 
-
- const uniqueArtists = [...new Set(images.map((image) => image.artist))];
+  const uniqueArtists = [...new Set(images.map((image) => image.artist))];
 
 
   return (
