@@ -29,7 +29,7 @@ export const getImagesFromDB = async () => {
         createdDate: image.createdDate,
         lastModified: image.lastModified,
         artist: image.artist,
-        tags: [""]
+        tags: image.tags || []
     }))
 }
 
@@ -38,8 +38,28 @@ export const getImagesFromDB = async () => {
   return db.getAll(STORE_NAME) as ImageItem[];
 }; */
 
-export const addImageToDB = async (imageSrc: string, name: string, createdDate: number, lastModified: number, artist: string) => {
-    const db = await openDB(DB_NAME, DB_VERSION);
-    return db.add(STORE_NAME, { id: Date.now(), name, src: imageSrc, createdDate, lastModified, artist})
-}
+export const addImageToDB = async (
+  imageSrc: string,
+  name: string,
+  createdDate: number,
+  lastModified: number,
+  artist: string,
+  tags: string[] = []
+) => {
+  const db = await openDB(DB_NAME, DB_VERSION);
+  return db.add(STORE_NAME, {
+    id: Date.now(),
+    name,
+    src: imageSrc,
+    createdDate,
+    lastModified,
+    artist,
+    tags,
+  });
+};
 
+// Actualizar una imagen en la base de datos
+export const updateImageInDB = async (image: ImageItem) => {
+    const db = await openDB(DB_NAME, DB_VERSION);
+    return db.put(STORE_NAME, image); // Utiliza put para actualizar o añadir si no existe
+};

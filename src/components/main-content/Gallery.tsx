@@ -8,6 +8,15 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Input } from "../ui/input";
 
+
+
+import TAGS from "./TAGS";
+
+import { WithContext as ReactTags, SEPARATORS } from "react-tag-input";
+import TagsInput from "./TagsInput";
+
+
+
 interface MasonryCardProps {
   data: {
     id: number;
@@ -30,7 +39,63 @@ function MasonryCard({ data: { id, name, src, lastModified, artist, tags } }: Ma
   const removeImageFromCollection = useCollectionStore(
     (state) => state.removeImageFromCollection
   );
+
+  const addTagToImage = useImageStore((state) => state.addTagToImage);
+
   const [selectedCollections, setSelectedCollections] = useState<number[]>([]);
+
+  
+
+
+  // STATE TAGS
+   const [tag, setTag] = useState([
+     { id: "India", text: "India", className: "" },
+     { id: "Vietnam", text: "Vietnam", className: "" },
+     { id: "Turkey", text: "Turkey", className: "" },
+   ]);
+
+   const suggestions = TAGS.map((tag) => {
+     return {
+       id: tag,
+       text: tag,
+       className: "",
+     };
+   });
+
+    const handleDelete = (index: number) => {
+      setTag(tag.filter((_, i) => i !== index));
+    };
+    const onTagUpdate = (index: number, newTag) => {
+      const updatedTags = [...tags];
+      updatedTags.splice(index, 1, newTag);
+      setTag(updatedTags);
+    };
+
+    const handleAddition = (tag) => {
+      setTag((prevTags) => {
+        return [...prevTags, tag];
+      });
+    };
+
+    const handleDrag = (tag, currPos: number, newPos: number) => {
+      const newTags = tags.slice();
+
+      newTags.splice(currPos, 1);
+      newTags.splice(newPos, 0, tag);
+
+      // re-render
+      setTag(newTags);
+    };
+
+    const handleTagClick = (index: number) => {
+      console.log("The tag at index " + index + " was clicked");
+    };
+
+    const onClearAll = () => {
+      setTag([]);
+    };
+
+
 
   //COLLECTIONS
 
@@ -77,6 +142,12 @@ function MasonryCard({ data: { id, name, src, lastModified, artist, tags } }: Ma
       .map((collection) => collection.id);
     setSelectedCollections(imageCollections);
   }, [collections, id]);
+
+
+
+  // SYSTEMS TAGGING
+
+  
 
   return (
     <div className="relative group">
@@ -182,7 +253,17 @@ function MasonryCard({ data: { id, name, src, lastModified, artist, tags } }: Ma
 
                   <div className="flex flex-col gap-2 justify-between">
                     <span className="text-sm">Tags</span>
-                    <Input />
+                    {/* <ReactTags
+                      tags={tag}
+                      suggestions={suggestions}
+                      handleDelete={handleDelete}
+                      handleAddition={handleAddition}
+                      handleTagClick={handleTagClick}
+                      onTagUpdate={onTagUpdate}
+                      delimiters={[188, 13]}
+                      editable
+                    /> */}
+                    <TagsInput imageId={id} />
                   </div>
 
                   <div className="flex flex-col gap-2 justify-between">

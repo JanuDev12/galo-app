@@ -87,7 +87,7 @@ function Artists() {
         </svg>
       }
     >
-      <div className="grid grid-cols-4 gap-x-10 gap-y-7">
+      <div className="grid grid-cols-4 gap-x-5 gap-y-7">
         {uniqueArtists.map((artist) => (
           <div
             key={artist}
