@@ -10,6 +10,7 @@ function Collections() {
   const navigate = useNavigate();
 
   const collections = useCollectionStore((state) => state.collections);
+  const deleteCollection = useCollectionStore((state) => state.deleteCollection)
 
   const createCollection = useCollectionStore(
     (state) => state.createCollection
@@ -60,6 +61,10 @@ function Collections() {
   useEffect(() => {
     getCollections().catch(console.error);
   }, []);
+
+    function handleDeleteCollection(collectionId: number) {
+      deleteCollection(collectionId);
+    }
 
   return (
     <Layout
@@ -174,7 +179,10 @@ function Collections() {
                           </div>
 
                           <DialogFooter className="justify-between mt-6">
-                            <Button variant="destructive">
+                            <Button
+                              variant="destructive"
+                              onClick={() => handleDeleteCollection(collection.id)}
+                            >
                               Delete Collection
                             </Button>
                             <Button variant="white"> Save Changes</Button>

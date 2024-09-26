@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { addCollectionToDB, getCollectionsFromDB, initDB, updateCollectionInDB } from "@/db/db-collections";
+import { addCollectionToDB, getCollectionsFromDB, initDB, updateCollectionInDB, deleteCollectionFromDB } from "@/db/db-collections";
 import { ImageItem } from "./image-store";
 
 export interface Collection {
@@ -26,7 +26,9 @@ interface CollectionStore {
     tags: string[]
   ) => void;
   removeImageFromCollection: (collectionId: number, imageId: number) => void;
-  deleteCollection: (collectionId: number) => void;
+  deleteCollection: (
+    collectionId: number
+  ) => (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const useCollectionStore = create<CollectionStore>((set) => ({
@@ -146,11 +148,17 @@ export const useCollectionStore = create<CollectionStore>((set) => ({
     });
   },
 
-  deleteCollection: (collectionId) =>
-    set((state) => ({
-      collections: state.collections.filter(
-        (collection) => collection.id !== collectionId
-      ),
-    })),
+  deleteCollection:  (collectionId) => {
+    try {
+       deleteCollectionFromDB(collectionId);
+
+      // Si la eliminación es exitosa, actualiza el estado global
+      set((state) => ({
+        collections: state.collections.filter((collection) => collection.id !== collectionId),
+      }));
+    } catch (error) {
+      console.error("Error al eliminar la imagen de la base de datos:", error);
+    }
+  },
 }));
 
