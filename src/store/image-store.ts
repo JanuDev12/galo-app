@@ -18,8 +18,11 @@ interface ImageStore {
   handleImageUploaded: (
     event: React.ChangeEvent<HTMLInputElement>
   ) => Promise<void>;
-  addTagToImage: (imageId: number, tag: string) => Promise<void>;
-  deleteImage: (imageId: number) =>  Promise<void>
+  updateImageAttributes: (
+    imageId: number,
+    payload: Partial<ImageItem>
+  ) => Promise<void>;
+  deleteImage: (imageId: number) => Promise<void>;
 }
 
 export const useImageStore = create<ImageStore>((set, get) => ({
@@ -29,11 +32,10 @@ export const useImageStore = create<ImageStore>((set, get) => ({
     try {
       await initDB(); // Starting index database
       const storedImages: ImageItem[] = await getImagesFromDB();
-  
+
       /* const loadedImages = await loadImages(); In case it need load local images*/
 
-      set({ images: storedImages })
-
+      set({ images: storedImages });
     } catch (error) {
       console.error("Error fetching images:", error);
     }
@@ -70,8 +72,8 @@ export const useImageStore = create<ImageStore>((set, get) => ({
                     tags: [],
                   };
 
-                  await updateImageInDB(imageItem)
-                  resolve(imageItem)
+                  await updateImageInDB(imageItem);
+                  resolve(imageItem);
                 }
               } catch (error) {
                 console.error("Error adding image to database:", error);
@@ -95,39 +97,35 @@ export const useImageStore = create<ImageStore>((set, get) => ({
     }
   },
 
-  addTagToImage: async (imageId , tag) => {
+  updateImageAttributes: async (imageId, payload) => {
     try {
       const { images } = get();
       const updatedImages = images.map((img) => {
-        if( img.id === imageId) {
-          // update the tags
-          const newTags = img.tags.includes(tag) ? img.tags : [...img.tags, tag];
-          const updatedImage = {...img, tags: newTags };
+        if (img.id === imageId) {
+          // update the atributes
+          const updatedImage: ImageItem = { ...img, ...payload };
 
-          // update the img in the Database
-          updateImageInDB(updatedImage).catch(console.error)
+          // update the img in the database
+          updateImageInDB(updatedImage).catch(console.error);
           return updatedImage;
         }
-        return img // If not match return the img without changes
-      })
+        return img; // If not match return the img without changes
+      });
       // update the store global
-      set({ images: updatedImages})
+      set({ images: updatedImages });
     } catch (error) {
-      console.error("Error adding tag to image:", error)
+      console.error("Error adding tag to image:", error);
     }
   },
 
-
-  deleteImage: async (imageId) =>{
-     try {
-       await deleteImageFromDB(imageId);
-       set((state) => ({
-         images: state.images.filter((image) => image.id !== imageId),
-       }));
-     } catch (error) {
-       console.error("Error al eliminar la imagen de la base de datos:", error);
-     }
-
-  }
-    
+  deleteImage: async (imageId) => {
+    try {
+      await deleteImageFromDB(imageId);
+      set((state) => ({
+        images: state.images.filter((image) => image.id !== imageId),
+      }));
+    } catch (error) {
+      console.error("Error al eliminar la imagen de la base de datos:", error);
+    }
+  },
 }));

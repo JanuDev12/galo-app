@@ -17,7 +17,7 @@ function MasonryCard({ data }: MasonryCardProps) {
   const [selectedCollections, setSelectedCollections] = useState<number[]>([]);
 
    const handleDeleteImage = useCallback(() => {
-     deleteImage(data.id);
+     deleteImage(data.id).catch(console.error);
    }, [deleteImage, data.id]);
 
 
@@ -81,7 +81,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
       render={MasonryCard}
       columnGutter={16}
       columnWidth={172}
-      overscanBy={20}
+      overscanBy={40}
       maxColumnCount={4}
     ></Masonry>
   );

@@ -80,8 +80,12 @@ function Sidebar() {
 
    const images = useImageStore((state) => state.images);
 
-
-   
+   const tagCounts = images.reduce((acc, image) => {
+     image.tags.forEach((tag) => {
+       acc[tag] = (acc[tag] || 0) + 1;
+     });
+     return acc;
+   }, {} as Record<string, number>);
 
 const tagColors: Record<string, string> = {
   Furry: "text-amber-500",
@@ -136,7 +140,21 @@ const tagColors: Record<string, string> = {
             </div>
 
             <div className=" mt-4 flex flex-col gap-2 font-medium">
-             
+              {Object.entries(tagCounts).map(([tag, count]) => (
+                <div
+                  key={tag}
+                  className="flex justify-between items-center text-sm border border-[--color-gray] rounded-[10px] p-2 text--400  w-full cursor-pointer"
+                >
+
+                  <div>
+                    <span className={tagColors[tag] || "text-gray-500"}>#</span>
+                    <span> {tag}</span>
+                  </div>
+
+                  <div className="text-xs">{count}</div>
+                
+                </div>
+              ))}
             </div>
           </div>
         </ul>
