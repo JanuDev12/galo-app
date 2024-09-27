@@ -4,9 +4,24 @@ import Artists from '../../pages/Artists/Artists';
 import AllPhotos from '../../pages/AllPhotos/AllPhotos';
 import CollectionName from '@/pages/Collections/CollectionName';
 import ArtistDetail from '@/pages/Artists/ArtistDetail';
+import { useImageStore } from '@/store/image-store';
+import { useEffect } from 'react';
+import { useCollectionStore } from '@/store/collections-store';
 
 function Content() {
-  
+  // Fetching images & collections
+  const fetchImages = useImageStore((state) => state.fetchImages);
+  const getCollections = useCollectionStore((state) => state.getCollections);
+
+  // Fetch collections & images on mount
+  useEffect(() => {
+    fetchImages().catch(console.error);
+  }, []);
+
+  useEffect(() => {
+     getCollections().catch(console.error);
+  }, [])
+
   return (
     <main className="content  bg-[--color-primary] overflow-scroll overflow-x-hidden">
       <div className="h-full w-full">

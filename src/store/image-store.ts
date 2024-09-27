@@ -1,4 +1,4 @@
-import { addImageToDB, getImagesFromDB, updateImageInDB, deleteImageFromDB , initDB } from "@/db/db-image";
+import { getImagesFromDB, updateImageInDB, deleteImageFromDB , initDB } from "@/db/db-image";
 import {create} from "zustand"
 
 export interface ImageItem {
@@ -19,9 +19,7 @@ interface ImageStore {
     event: React.ChangeEvent<HTMLInputElement>
   ) => Promise<void>;
   addTagToImage: (imageId: number, tag: string) => Promise<void>;
-  deleteImage: (imageId: number) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => void;
+  deleteImage: (imageId: number) =>  Promise<void>
 }
 
 export const useImageStore = create<ImageStore>((set, get) => ({
@@ -31,21 +29,11 @@ export const useImageStore = create<ImageStore>((set, get) => ({
     try {
       await initDB(); // Starting index database
       const storedImages: ImageItem[] = await getImagesFromDB();
-      console.log(storedImages);
-
+  
       /* const loadedImages = await loadImages(); In case it need load local images*/
 
-      set({
-        images: storedImages.map((image) => ({
-          id: image.id,
-          name: image.name,
-          src: image.src,
-          createdDate: image.createdDate,
-          lastModified: image.lastModified || Date.now(),
-          artist: image.artist,
-          tags: image.tags,
-        })),
-      });
+      set({ images: storedImages })
+
     } catch (error) {
       console.error("Error fetching images:", error);
     }
@@ -54,52 +42,36 @@ export const useImageStore = create<ImageStore>((set, get) => ({
   // logic to handle images loaded for the user
   handleImageUploaded: async (event) => {
     const files = event.target.files;
-    console.log(files);
     if (files && files.length > 0) {
       // Creating array to store promises for each images
       const imagesUploaded = Array.from(files).map(async (file, index) => {
         if (file && file instanceof Blob) {
           // Reading the promise for each archive
-          return new Promise<{
-            id: number;
-            name: string;
-            src: string;
-            createdDate: number;
-            lastModified: number;
-            artist: string;
-            tags: string[];
-          }>((resolve, reject) => {
+          return new Promise<ImageItem>((resolve, reject) => {
             const reader = new FileReader();
             reader.onloadend = async () => {
               try {
                 const imageSrc = reader.result;
                 if (typeof imageSrc === "string") {
                   // adding image to databe and state
-                  console.log(imageSrc);
                   const artistName =
                     window.prompt(
                       "Ingresa el nombre del artista:",
                       "Unknown"
                     ) ?? "Unknown Artist";
 
-                  const date = Date.now();
-                  await addImageToDB(
-                    imageSrc,
-                    file.name,
-                    date,
-                    file.lastModified,
-                    artistName
-                  );
-
-                  resolve({
+                  const imageItem = {
                     id: get().images.length + index,
                     name: file.name,
                     src: imageSrc,
-                    createdDate: date,
+                    createdDate: Date.now(),
                     lastModified: file.lastModified,
                     artist: artistName,
                     tags: [],
-                  });
+                  };
+
+                  await updateImageInDB(imageItem)
+                  resolve(imageItem)
                 }
               } catch (error) {
                 console.error("Error adding image to database:", error);
@@ -123,32 +95,32 @@ export const useImageStore = create<ImageStore>((set, get) => ({
     }
   },
 
-  addTagToImage: async (imageId: number, tag: string) => {
-    const { images } = get();
+  addTagToImage: async (imageId , tag) => {
+    try {
+      const { images } = get();
+      const updatedImages = images.map((img) => {
+        if( img.id === imageId) {
+          // update the tags
+          const newTags = img.tags.includes(tag) ? img.tags : [...img.tags, tag];
+          const updatedImage = {...img, tags: newTags };
 
-    const updatedImages = images.map((img) => {
-      if (img.id === imageId) {
-        // Actualiza las etiquetas
-        const newTags = img.tags.includes(tag) ? img.tags : [...img.tags, tag];
-        const updatedImage = { ...img, tags: newTags };
-
-        // Actualiza la imagen en la base de datos usando el ID correcto
-
-        updateImageInDB(updatedImage).catch(console.error);
-        return updatedImage; // Devuelve la imagen actualizada
-      }
-      return img; // Devuelve la imagen sin cambios
-    });
-
-    // Actualiza el estado global
-    set({ images: updatedImages });
+          // update the img in the Database
+          updateImageInDB(updatedImage).catch(console.error)
+          return updatedImage;
+        }
+        return img // If not match return the img without changes
+      })
+      // update the store global
+      set({ images: updatedImages})
+    } catch (error) {
+      console.error("Error adding tag to image:", error)
+    }
   },
+
+
   deleteImage: async (imageId) =>{
      try {
-       // Llama a la función para eliminar la imagen de la base de datos
        await deleteImageFromDB(imageId);
-
-       // Si la eliminación es exitosa, actualiza el estado global
        set((state) => ({
          images: state.images.filter((image) => image.id !== imageId),
        }));

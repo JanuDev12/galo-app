@@ -31,23 +31,20 @@ const CollectionSelector = ({
     setSelectedCollections(updatedCollections)
 
     if (isAdded) {
-        removeImageFromCollection(collectionId, image.id)
+        removeImageFromCollection(collectionId, image.id).catch(console.error)
     } else {
         addImageToCollection(
-          collectionId,
-          image.id,
-          image.name,
-          image.src,
-          image.lastModified,
-          image.artist,
-          image.tags
-        );
+          collectionId, image
+        ).catch(console.error);
     }
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex justify-center w-28 h-6 mx-auto gap-1 items-center">
+        
+        {/* SHOW THE COLLECTION NAME IF EXIST */}
+
         {selectedCollections.length > 0 ? (
           <span className="text-sm">
             {selectedCollections
@@ -55,14 +52,15 @@ const CollectionSelector = ({
                 const collection = collections.find(
                   (col) => col.id === collectionId
                 );
-                return collection?.name ?? ""; // Muestra el nombre de la colección si está
+                return collection?.name ?? ""; 
               })
               .slice(-1)
               .join(", ")}
           </span>
         ) : (
-          <span className="text-sm"></span> // Texto por defecto si no pertenece a ninguna colección
+          <span className="text-sm"></span> // If collection not exist show nothing for default 
         )}
+
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="15"
@@ -83,12 +81,14 @@ const CollectionSelector = ({
       <DropdownMenuContent className="w-40 rounded-2xl px-3 border-transparent bg-white/10 backdrop-blur z-auto">
         <DropdownMenuLabel>Save</DropdownMenuLabel>
         <DropdownMenuSeparator />
+
+        {/* SHOWING ALL THE COLLECTIONS */}
         <div className="flex flex-col gap-2">
           {collections.map((collection) => {
             const isAdded = selectedCollections.includes(collection.id);
             return (
               <label key={collection.id}>
-                {/*  Añadimos la imagen al cambiar de selección */}
+             
                 <input
                   type="checkbox"
                   value={collection.id}
@@ -101,6 +101,7 @@ const CollectionSelector = ({
               </label>
             );
           })}
+
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

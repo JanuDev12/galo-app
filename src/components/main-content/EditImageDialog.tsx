@@ -81,10 +81,12 @@ function EditImageDialog({ imageId, imageSrc, onDelete}: EditImageDialogProps) {
         </div>
 
         <DialogFooter className="justify-between mt-6">
+
           <Button variant="destructive" onClick={/* () => handleDeleteImage(id) */ onDelete}>
             Delete
           </Button>
           <Button variant="white"> Save Changes</Button>
+          
         </DialogFooter>
 
 

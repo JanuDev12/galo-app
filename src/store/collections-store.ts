@@ -14,150 +14,149 @@ interface CollectionStore {
   setImagesCollections: (
     collectionId: number,
     newImagesCollection: ImageItem[]
-  ) => void;
-  createCollection: (name: string) => void;
+  ) => Promise<void>;
+  createCollection: (name: string) => Promise<void>;
   addImageToCollection: (
     collectionId: number,
-    imageId: number,
-    imageName: string,
-    imageUrls: string,
-    imageDate: number,
-    artist: string,
-    tags: string[]
-  ) => void;
-  removeImageFromCollection: (collectionId: number, imageId: number) => void;
+    image: ImageItem
+  ) => Promise<void>;
+  removeImageFromCollection: (
+    collectionId: number,
+    imageId: number
+  ) => Promise<void>;
   deleteCollection: (
     collectionId: number
-  ) => (event: React.ChangeEvent<HTMLInputElement>) => void;
+  ) => (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
 }
 
-export const useCollectionStore = create<CollectionStore>((set) => ({
+export const useCollectionStore = create<CollectionStore>((set, get) => ({
   collections: [],
-
   getCollections: async () => {
     try {
-      await initDB(); // Iniciar base de datos de IndexedDB
+      await initDB(); // Start Database Collection
       const storedCollections: Collection[] = await getCollectionsFromDB();
 
       set({
-        collections: storedCollections.map((col) => ({
-          id: col.id,
-          name: col.name,
-          imagesCollected: col.imagesCollected || [], // Si no tiene imágenes, asigna un array vacío
-        })),
+        collections: storedCollections,
       });
     } catch (error) {
       console.error("Error fetching collections from IndexedDB:", error);
     }
   },
 
-  setImagesCollections: (collectionId, newImagesCollection) =>
-    set((state) => ({
-      collections: state.collections.map((collection) =>
-        collection.id === collectionId
-          ? { ...collection, imagesCollected: newImagesCollection }
-          : collection
-      ),
-    })),
-  /* createCollection: (name) =>
-    set((state) => ({
-      collections: [
-        ...state.collections,
-        {
-          id: Date.now(),
-          name,
-          imagesCollected: [],
-        },
-      ],
-    })), */
-  createCollection: async (name) => {
-    const newCollection = {
-      id: Date.now(),
-      name,
-      imagesCollected: [],
-    };
-
-    // Agregar colección a IndexedDB
-    await addCollectionToDB(newCollection.name);
-
-    set((state) => ({
-      collections: [...state.collections, newCollection],
-    }));
+  setImagesCollections: async (collectionId, newImagesCollection) => {
+    try {
+      set((state) => {
+        const updateCollections = state.collections.map((collection) =>
+          collection.id === collectionId
+            ? { ...collection, imagesCollected: newImagesCollection }
+            : collection
+        );
+        return { collections: updateCollections };
+      });
+      // Update CollectionDB
+      await updateCollectionInDB(
+        collectionId,
+        get().collections.find((c) => c.id === collectionId)!
+      );
+    } catch (error) {
+      console.error("Error updating collection in IndexedDB: ", error);
+    }
   },
-  addImageToCollection: async (
-    collectionId,
-    imageId,
-    imageName,
-    imageUrl,
-    lastModified,
-    artist,
-    tags
-  ) => {
-    set((state) => {
-      const updatedCollections = state.collections.map((collection) => {
-        if (collection.id === collectionId) {
-          const newImage = {
-            id: imageId,
-            name: imageName,
-            src: imageUrl,
-            createdDate: collection.imagesCollected.length + 1, // Este valor es el orden
-            lastModified,
-            artist,
-            tags: tags,
-          };
 
-          const updatedCollection = {
-            ...collection,
-            imagesCollected: [...collection.imagesCollected, newImage],
-          };
+  createCollection: async (name) => {
+    try {
+      const newCollection = {
+        id: Date.now(),
+        name,
+        imagesCollected: [],
+      };
+      await addCollectionToDB(newCollection.name);
+      set((state) => ({
+        collections: [...state.collections, newCollection],
+      }));
+    } catch (error) {
+      console.error("Error creating collection in indexedCollectionsDB", error);
+    }
+  },
 
-          // Actualizar IndexedDB con la nueva colección modificada
-          updateCollectionInDB(collectionId, updatedCollection);
+  addImageToCollection: async (collectionId, image) => {
+    try {
+      set((state) => {
+        const updatedCollections = state.collections.map((collection) => {
+          if (collection.id === collectionId) {
+            const newImage = {
+              id: image.id,
+              name: image.name || "Unnamed Image",
+              src: image.src || "",
+              createdDate: collection.imagesCollected.length + 1, // Mantener el orden
+              lastModified: image.lastModified || new Date(),
+              artist: image.artist || "Unknown Artist",
+              tags: image.tags || [],
+            };
 
-          return updatedCollection;
-        }
-        return collection;
+            return {
+              ...collection,
+              imagesCollected: [...collection.imagesCollected, newImage],
+            };
+          }
+          return collection;
+        });
+
+        return { collections: updatedCollections };
       });
 
-      return { collections: updatedCollections };
-    });
+      // Updating IndexedCollectionDB
+      await updateCollectionInDB(
+        collectionId,
+        get().collections.find((c) => c.id === collectionId)!
+      );
+    } catch (error) {
+      console.error(
+        "Error adding image to collection in IndexedCollectionDB",
+        error
+      );
+    }
   },
 
   removeImageFromCollection: async (collectionId, imageId) => {
-    set((state) => {
-      const updatedCollections = state.collections.map((collection) => {
-        if (collection.id === collectionId) {
-          const updatedImages = collection.imagesCollected.filter(
-            (image) => image.id !== imageId
-          );
-
-          const updatedCollection = {
-            ...collection,
-            imagesCollected: updatedImages,
-          };
-
-          // Actualizar IndexedDB con la colección modificada
-          updateCollectionInDB(collectionId, updatedCollection);
-
-          return updatedCollection;
-        }
-        return collection;
+    try {
+      set((state) => {
+        const updatedCollections = state.collections.map((collection) =>
+          collection.id === collectionId
+            ? {
+                ...collection,
+                imagesCollected: collection.imagesCollected.filter(
+                  (img) => img.id !== imageId
+                ),
+              }
+            : collection
+        );
+        return { collections: updatedCollections };
       });
-
-      return { collections: updatedCollections };
-    });
+      // Update IndexedCollectionDB
+      await updateCollectionInDB(
+        collectionId,
+        get().collections.find((c) => c.id === collectionId)!
+      );
+    } catch (error) {
+      console.error(
+        "Error removing image from collection in IndexedDB:",
+        error
+      );
+    }
   },
 
-  deleteCollection:  (collectionId) => {
+  deleteCollection: async (collectionId) => {
     try {
-       deleteCollectionFromDB(collectionId);
-
-      // Si la eliminación es exitosa, actualiza el estado global
+      await deleteCollectionFromDB(collectionId);
       set((state) => ({
-        collections: state.collections.filter((collection) => collection.id !== collectionId),
+        collections: state.collections.filter(
+          (collection) => collection.id !== collectionId
+        ),
       }));
     } catch (error) {
-      console.error("Error al eliminar la imagen de la base de datos:", error);
+      console.error("Error deleting collection from IndexedDB:", error);
     }
   },
 }));

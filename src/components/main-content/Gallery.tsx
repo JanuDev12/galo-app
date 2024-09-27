@@ -1,6 +1,6 @@
 import { ImageItem, useImageStore } from "@/store/image-store";
 import { Masonry } from "masonic"
-import { useEffect, useState } from "react";
+import { useCallback, useEffect,  useState } from "react";
 import { useCollectionStore } from "@/store/collections-store";
 import EditImageDialog from "./EditImageDialog";
 import CollectionSelector from "./CollectionSelector";
@@ -16,9 +16,10 @@ function MasonryCard({ data }: MasonryCardProps) {
 
   const [selectedCollections, setSelectedCollections] = useState<number[]>([]);
 
-  function handleDeleteImage(imageId: number) {
-    deleteImage(imageId);
-  }
+   const handleDeleteImage = useCallback(() => {
+     deleteImage(data.id);
+   }, [deleteImage, data.id]);
+
 
   // Logic to handle the initial collection selection
   useEffect(() => {
@@ -33,7 +34,11 @@ function MasonryCard({ data }: MasonryCardProps) {
 
   return (
     <div className="relative group">
-      <img src={data.src} alt={data.name} className="rounded-xl shadow w-full" />
+      <img
+        src={data.src}
+        alt={data.name}
+        className="rounded-xl shadow w-full"
+      />
       <div className="bg-black/0 hover:bg-black/50 absolute w-full h-full top-0 left-0 opacity-0 hover:opacity-100 p-3 flex flex-col justify-between transition-opacity duration-200 ease-in-out pointer-events-none group-hover:pointer-events-auto group-focus-within:pointer-events-auto ">
         {/* BUTTON COLLECTION SELECTOR */}
 
@@ -46,12 +51,17 @@ function MasonryCard({ data }: MasonryCardProps) {
         {/*  EDIT IMAGE DIALOG */}
 
         <div className="flex justify-between items-end">
-          <p className="text-xs text-[--color-light-tertiary]">@{data.artist}</p>
+          <p className="text-xs text-[--color-light-tertiary]">
+            @{data.artist}
+          </p>
+
           <EditImageDialog
             imageId={data.id}
             imageSrc={data.src}
-            onDelete={() => deleteImage(data.id)}
+            onDelete={handleDeleteImage}
           />
+
+         
         </div>
       </div>
     </div>
@@ -64,18 +74,7 @@ function MasonryCard({ data }: MasonryCardProps) {
 
 // eslint-disable-next-line react/prop-types
 const Gallery: React.FC<GalleryProps> = ({ images }) => {
-  
-  
-  // Fetching images
-  
-  const fetchImages = useImageStore((state) => state.fetchImages);
-
-  // handling the promise fetchImages
-  useEffect(() => {
-    fetchImages().catch(console.error); 
-  }, []);
-
-  
+ 
   return (
     <Masonry
       items={images}

@@ -2,30 +2,37 @@ import { Button } from '@/components/ui/button';
 import Layout from '@/components/main-content/Layout';
 import { useCollectionStore } from '@/store/collections-store';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+import { useCallback,  useMemo } from 'react';
+import EditCollectionDialog from '@/components/main-content/EditCollectionDialog';
 
 function Collections() {
   const navigate = useNavigate();
 
   const collections = useCollectionStore((state) => state.collections);
-  const deleteCollection = useCollectionStore((state) => state.deleteCollection)
-
+  const deleteCollection = useCollectionStore(
+    (state) => state.deleteCollection
+  );
   const createCollection = useCollectionStore(
     (state) => state.createCollection
   );
 
   const placeholderImage = "/placeholder.jpg";
 
-  const handleCreateCollection = () => {
+  const handleCreateCollection = useCallback(()  => {
     const collectionName = prompt("Write name collection:");
     if (collectionName) {
-      createCollection(collectionName);
+      createCollection(collectionName).catch(console.error);
     }
-  };
+  }, [createCollection]);
 
-  const rightHeader = (
+  const handleDeleteCollection = useCallback(
+      (collectionId: number) => {
+        deleteCollection(collectionId);
+      },
+      [deleteCollection]
+    );
+
+  const rightHeader = useMemo(() => (
     <Button
       size="sm"
       variant="outline"
@@ -51,20 +58,8 @@ function Collections() {
       </svg>
       New
     </Button>
-  );
+  ), [handleCreateCollection]);
 
-  // Fetching images
-
-  const getCollections = useCollectionStore((state) => state.getCollections);
-
-  // handling the promise fetchImages
-  useEffect(() => {
-    getCollections().catch(console.error);
-  }, []);
-
-    function handleDeleteCollection(collectionId: number) {
-      deleteCollection(collectionId);
-    }
 
   return (
     <Layout
@@ -89,14 +84,12 @@ function Collections() {
       }
       pageHeader={rightHeader}
     >
-
-      
       <div className="py-2 flex gap-x-8 gap-y-16 flex-wrap">
         {collections.length === 0 ? (
           <p>Not Collection created.</p>
         ) : (
           collections.map((collection) => {
-            // Getting images to show
+            // Get images to display
             const imagesToShow = collection.imagesCollected.slice(1, 3);
             const firstImageToShow =
               collection.imagesCollected[0] || placeholderImage;
@@ -130,65 +123,11 @@ function Collections() {
                   {/* hover */}
                   <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="absolute bottom-0 right-0 p-3">
-                      <Dialog>
-                        <DialogTrigger
-                          asChild
-                          className="z-50"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Button
-                            variant="outline"
-                            className="bg-transparent border-[--color-light-tertiary] size-8 p-1 rounded-3xl"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="18"
-                              height="18"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              class="icon icon-tabler icons-tabler-outline icon-tabler-pencil"
-                            >
-                              <path
-                                stroke="none"
-                                d="M0 0h24v24H0z"
-                                fill="none"
-                              />
-                              <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                              <path d="M13.5 6.5l4 4" />
-                            </svg>
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent
-                          className="max-w-[350px]"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <DialogHeader>
-                            <DialogTitle>Edit Collection</DialogTitle>
-                          </DialogHeader>
 
-                          <div className="flex flex-col w-full gap-3">
-                            <div className="flex flex-col gap-2 justify-between">
-                              <span className="text-sm">Name</span>
-                              <Input />
-                            </div>
-                          </div>
+                      <EditCollectionDialog
+                        onDelete={() => handleDeleteCollection(collection.id)}
+                      />
 
-                          <DialogFooter className="justify-between mt-6">
-                            <Button
-                              variant="destructive"
-                              onClick={() => handleDeleteCollection(collection.id)}
-                            >
-                              Delete Collection
-                            </Button>
-                            <Button variant="white"> Save Changes</Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
                     </div>
                   </div>
                 </div>
