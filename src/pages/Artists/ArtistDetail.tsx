@@ -14,7 +14,7 @@ function ArtistDetail() {
   const { artist } = useParams<{ artist: string}>()
   const images = useImageStore((state) => state.images);
  
-  const { searchTerm, setPlaceholder } = useSearchContext();
+  const { searchTerm, setPlaceholder, tags } = useSearchContext();
 
 
   // filter images for artist selected
@@ -22,7 +22,8 @@ function ArtistDetail() {
 
    const filteredImages = useSearch(artistImages, {
      searchTerm,
-     searchFields: ["name", "artist", "tags"],
+     searchFields: ["name", "artist"],
+     tags
    });
 
   const controls = <ControlButtons images={filteredImages} />;

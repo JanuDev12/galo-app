@@ -2,6 +2,7 @@ import { useImageStore } from "@/store/image-store";
 import { Button } from "../ui/button";
 import Logo from "./Logo";
 import SidebarItem from "./SidebarItem";
+import { useSearchContext } from "@/context/SearchContext";
 
 const sidebarItems = [
   {
@@ -79,6 +80,7 @@ const sidebarItems = [
 function Sidebar() {
 
    const images = useImageStore((state) => state.images);
+   const {tags, setTags } = useSearchContext();
 
    const tagCounts = images.reduce((acc, image) => {
      image.tags.forEach((tag) => {
@@ -86,6 +88,17 @@ function Sidebar() {
      });
      return acc;
    }, {} as Record<string, number>);
+
+   const handleTagClick = (tag: string) => {
+
+    if (tags.includes(tag)) {
+      setTags(tags.filter((t) => t !== tag))
+    } else {
+      setTags( [...tags, tag])
+    }
+
+    
+   }
 
 const tagColors: Record<string, string> = {
   Furry: "text-amber-500",
@@ -144,6 +157,7 @@ const tagColors: Record<string, string> = {
                 <div
                   key={tag}
                   className="flex justify-between items-center text-sm border border-[--color-gray] rounded-[10px] p-2 text--400  w-full cursor-pointer"
+                  onClick={() => handleTagClick(tag)}
                 >
 
                   <div>

@@ -22,6 +22,7 @@ function Artists() {
   const filteredArtist = useSearch(uniqueArtists, {
     searchTerm,
     searchFields: ["name"],
+    ignoreTags: true
   });
 
 

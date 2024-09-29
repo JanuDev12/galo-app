@@ -28,6 +28,7 @@ function Collections() {
   const filteredCollections = useSearch(collections, {
     searchTerm,
     searchFields: ["name"],
+    ignoreTags: true,
   });
 
 

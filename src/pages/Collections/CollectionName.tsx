@@ -11,7 +11,7 @@ import {  useParams } from 'react-router-dom'
 
 function CollectionName() {
     const {id} = useParams<{id: string }>();
-    const { searchTerm, setPlaceholder } = useSearchContext();
+    const { searchTerm, setPlaceholder, tags } = useSearchContext();
 
     const collections = useCollectionStore((state) => state.collections);
   
@@ -30,6 +30,7 @@ function CollectionName() {
        const filteredImages = useSearch(collectionImages, {
          searchTerm,
          searchFields: ["name", "artist", "tags"],
+         tags
        });
 
     const controls = (

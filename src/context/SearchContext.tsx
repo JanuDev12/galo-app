@@ -6,6 +6,8 @@ interface SearchContextProps {
   setSearchTerm: (term: string) => void;
   placeholder: string;
   setPlaceholder: (placeholder: string) => void;
+  tags: string[]; // support for tags
+  setTags: (tags: string[]) => void;
 }
 
 const SearchContext = createContext<SearchContextProps | undefined>(undefined)
@@ -13,9 +15,10 @@ const SearchContext = createContext<SearchContextProps | undefined>(undefined)
 export const SearchProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [placeholder, setPlaceholder] = useState("");
+    const [tags, setTags] = useState<string[]>([])
 
     return (
-        <SearchContext.Provider value={{ searchTerm, setSearchTerm, placeholder, setPlaceholder }}>
+        <SearchContext.Provider value={{ searchTerm, setSearchTerm, placeholder, setPlaceholder, tags, setTags }}>
             {children}
         </SearchContext.Provider>
     )

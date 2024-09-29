@@ -9,11 +9,12 @@ import { useEffect } from 'react';
 
 function AllPhotos() {
   const images = useImageStore((state) => state.images);
-  const { searchTerm, setPlaceholder } = useSearchContext();
+  const { searchTerm, setPlaceholder , tags} = useSearchContext();
   
    const filteredImages = useSearch(images, {
      searchTerm,
-     searchFields: ["name", "artist", "tags"],
+     searchFields: ["name", "artist"],
+     tags
    });
 
   /*  const handleSearch = (term: string) => {
