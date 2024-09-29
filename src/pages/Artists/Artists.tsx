@@ -1,14 +1,33 @@
 import Layout from '@/components/main-content/Layout';
+import { useSearchContext } from '@/context/SearchContext';
+import { useSearch } from '@/hooks/useSearch';
 import { useImageStore } from '@/store/image-store';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Artists() {
 
   const { images } = useImageStore((state) => state);
+  const { searchTerm, setPlaceholder } = useSearchContext();
 
   const navigate = useNavigate();
-
+/* 
   const uniqueArtists = [...new Set(images.map((image) => image.artist))];
+ */
+  const uniqueArtists = [...new Set(images.map((image) => image.artist))].map(
+    (name) => ({ name })
+  );
+
+
+  const filteredArtist = useSearch(uniqueArtists, {
+    searchTerm,
+    searchFields: ["name"],
+  });
+
+
+   useEffect(() => {
+     setPlaceholder("Search in Artists");
+   }, [setPlaceholder]);
 
 
   return (
@@ -34,12 +53,13 @@ function Artists() {
         </svg>
       }
     >
+
       <div className="grid grid-cols-4 gap-x-5 gap-y-7">
-        {uniqueArtists.map((artist) => (
+        {filteredArtist.map((artist) => (
           <div
-            key={artist}
+            key={artist.name}
             className="p-4 bg-[--color-secondary] border border-[--color-gray] rounded  cursor-pointer flex  items-center gap-3"
-            onClick={() => navigate(`/artists/${artist}`)}
+            onClick={() => navigate(`/artists/${artist.name}`)}
           >
             <div className=" rounded-2xl overflow-hidden">
               <svg
@@ -62,10 +82,10 @@ function Artists() {
 
             <div className="w-full flex items-center justify-between">
               <span className="font-semibold text-[--color-light] text-sm ">
-                @{artist}
+                @{artist.name}
               </span>
               <p className="text-[--color-light-tertiary] text-xs">
-                {images.filter((image) => image.artist === artist).length} works
+                {images.filter((image) => image.artist === artist.name).length} works
               </p>
             </div>
           </div>

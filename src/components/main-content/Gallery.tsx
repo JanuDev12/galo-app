@@ -77,6 +77,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
  
   return (
     <Masonry
+      key={images.length}
       items={images}
       render={MasonryCard}
       columnGutter={16}

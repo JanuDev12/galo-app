@@ -81,7 +81,7 @@ function EditImageDialog({ imageId, imageSrc, onDelete}: EditImageDialogProps) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-[550px]">
+      <DialogContent className="max-w-[550px]" aria-description='ad'>
         <DialogHeader>
           <DialogTitle>Edit Image</DialogTitle>
         </DialogHeader>

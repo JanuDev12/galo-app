@@ -59,7 +59,7 @@ function ControlButtons({images, collectionId, isCollectionPage, }: ControlButto
 
     if (isCollectionPage && imagesChanged) {
        if (collectionId !== undefined) {
-         setImagesCollections(collectionId, sortedImages);
+         setImagesCollections(collectionId, sortedImages).catch(console.error);
        } else {
          console.error("Collection ID is undefined.");
        }

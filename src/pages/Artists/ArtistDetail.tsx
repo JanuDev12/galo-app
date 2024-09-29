@@ -2,18 +2,35 @@ import Gallery from '@/components/main-content/Gallery';
 import ControlButtons from '@/components/main-content/header-controls/ControlButtons';
 import HeaderInfo from '@/components/main-content/header-controls/HeaderInfo';
 import Layout from '@/components/main-content/Layout'
+import { Input } from '@/components/ui/input';
+import { useSearchContext } from '@/context/SearchContext';
+import { useSearch } from '@/hooks/useSearch';
 import { useImageStore } from '@/store/image-store';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom'
 
 function ArtistDetail() {
 
   const { artist } = useParams<{ artist: string}>()
   const images = useImageStore((state) => state.images);
+ 
+  const { searchTerm, setPlaceholder } = useSearchContext();
+
 
   // filter images for artist selected
   const artistImages = images.filter(image => image.artist === artist)
 
-  const controls = <ControlButtons images={images} />;
+   const filteredImages = useSearch(artistImages, {
+     searchTerm,
+     searchFields: ["name", "artist", "tags"],
+   });
+
+  const controls = <ControlButtons images={filteredImages} />;
+
+    useEffect(() => {
+      setPlaceholder(`Search in @${artist}`);
+    }, [setPlaceholder]);
+
 
   return (
     <Layout
@@ -38,9 +55,9 @@ function ArtistDetail() {
         </svg>
       }
       pageHeader={controls}
-      info={<HeaderInfo countPhotos={artistImages.length} />}
+      info={<HeaderInfo countPhotos={filteredImages.length} />}
     >
-      <Gallery images={artistImages} />
+      <Gallery images={filteredImages} />
     </Layout>
   );
 }

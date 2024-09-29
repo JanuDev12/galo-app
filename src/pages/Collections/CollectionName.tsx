@@ -2,12 +2,19 @@ import Gallery from '@/components/main-content/Gallery';
 import ControlButtons from '@/components/main-content/header-controls/ControlButtons';
 import HeaderInfo from '@/components/main-content/header-controls/HeaderInfo';
 import Layout from '@/components/main-content/Layout';
+import { useSearchContext } from '@/context/SearchContext';
+import { useSearch } from '@/hooks/useSearch';
 import { useCollectionStore } from '@/store/collections-store';
+import { useEffect } from 'react';
+
 import {  useParams } from 'react-router-dom'
 
 function CollectionName() {
     const {id} = useParams<{id: string }>();
+    const { searchTerm, setPlaceholder } = useSearchContext();
+
     const collections = useCollectionStore((state) => state.collections);
+  
 
     //Searching the collection ID
     const actualCollection = collections.find((col) => col.id === Number(id));
@@ -19,13 +26,25 @@ function CollectionName() {
    // Getting images belong in the collection
       const collectionImages = actualCollection.imagesCollected;
 
+
+       const filteredImages = useSearch(collectionImages, {
+         searchTerm,
+         searchFields: ["name", "artist", "tags"],
+       });
+
     const controls = (
       <ControlButtons
-        images={collectionImages}
+        images={filteredImages}
         collectionId={actualCollection.id}
         isCollectionPage={true}
       />
     );
+
+
+    useEffect(() => {
+      setPlaceholder(`Search in ${actualCollection.name}`);
+    }, [setPlaceholder]);
+
     return (
       <Layout
         title={actualCollection.name}
@@ -47,10 +66,10 @@ function CollectionName() {
             <path d="M17 17v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2h2" />
           </svg>
         }
-         pageHeader={controls} 
-        info={<HeaderInfo countPhotos={collectionImages.length} />}
+        pageHeader={controls}
+        info={<HeaderInfo countPhotos={filteredImages.length} />}
       >
-        <Gallery images={collectionImages} />
+        <Gallery images={filteredImages} />
       </Layout>
     );
 }

@@ -2,11 +2,14 @@ import { Button } from '@/components/ui/button';
 import Layout from '@/components/main-content/Layout';
 import { useCollectionStore } from '@/store/collections-store';
 import { useNavigate } from 'react-router-dom';
-import { useCallback,  useMemo } from 'react';
+import { useCallback,  useEffect,  useMemo} from 'react';
 import EditCollectionDialog from '@/components/main-content/EditCollectionDialog';
+import { useSearch } from '@/hooks/useSearch';
+import { useSearchContext } from '@/context/SearchContext';
 
 function Collections() {
   const navigate = useNavigate();
+  const { searchTerm, setPlaceholder } = useSearchContext();
 
   const collections = useCollectionStore((state) => state.collections);
   const deleteCollection = useCollectionStore(
@@ -16,7 +19,17 @@ function Collections() {
     (state) => state.createCollection
   );
 
+
+
   const placeholderImage = "/placeholder.jpg";
+
+  
+
+  const filteredCollections = useSearch(collections, {
+    searchTerm,
+    searchFields: ["name"],
+  });
+
 
   const handleCreateCollection = useCallback(()  => {
     const collectionName = prompt("Write name collection:");
@@ -61,6 +74,11 @@ function Collections() {
   ), [handleCreateCollection]);
 
 
+  useEffect(() => {
+    setPlaceholder("Search in Collections");
+  }, [setPlaceholder]);
+
+
   return (
     <Layout
       title="Collections"
@@ -85,10 +103,10 @@ function Collections() {
       pageHeader={rightHeader}
     >
       <div className="py-2 flex gap-x-8 gap-y-16 flex-wrap">
-        {collections.length === 0 ? (
+        {filteredCollections.length === 0 ? (
           <p>Not Collection created.</p>
         ) : (
-          collections.map((collection) => {
+          filteredCollections.map((collection) => {
             // Get images to display
             const imagesToShow = collection.imagesCollected.slice(1, 3);
             const firstImageToShow =
@@ -123,11 +141,9 @@ function Collections() {
                   {/* hover */}
                   <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="absolute bottom-0 right-0 p-3">
-
                       <EditCollectionDialog
                         onDelete={() => handleDeleteCollection(collection.id)}
                       />
-
                     </div>
                   </div>
                 </div>
