@@ -1,4 +1,5 @@
 import { getImagesFromDB, updateImageInDB, deleteImageFromDB , initDB } from "@/db/db-image";
+import { determineFileType } from "@/utils/fileUtils";
 import {create} from "zustand"
 
 export interface ImageItem {
@@ -9,11 +10,14 @@ export interface ImageItem {
   lastModified: number;
   artist: string;
   tags: string[];
+  type: "image" | "video" | "gif";
 }
 
 interface ImageStore {
   images: ImageItem[];
+  filteredImages: ImageItem[];
   setImages: (newImages: ImageItem[]) => void;
+  setFilteredImages: (newImages: ImageItem[]) => void;
   fetchImages: () => Promise<void>;
   handleImageUploaded: (
     event: React.ChangeEvent<HTMLInputElement>
@@ -27,7 +31,13 @@ interface ImageStore {
 
 export const useImageStore = create<ImageStore>((set, get) => ({
   images: [],
+  filteredImages: [],
   setImages: (newImages) => set({ images: newImages }),
+
+  setFilteredImages: (newImages) => {
+    set({ filteredImages: newImages });
+  },
+
   fetchImages: async () => {
     try {
       await initDB(); // Starting index database
@@ -35,7 +45,7 @@ export const useImageStore = create<ImageStore>((set, get) => ({
 
       /* const loadedImages = await loadImages(); In case it need load local images*/
 
-      set({ images: storedImages });
+      set({ images: storedImages, filteredImages: storedImages });
     } catch (error) {
       console.error("Error fetching images:", error);
     }
@@ -61,6 +71,7 @@ export const useImageStore = create<ImageStore>((set, get) => ({
                       "Ingresa el nombre del artista:",
                       "Unknown"
                     ) ?? "Unknown Artist";
+                  const fileType = determineFileType(file);
 
                   const imageItem = {
                     id: get().images.length + index,
@@ -70,6 +81,7 @@ export const useImageStore = create<ImageStore>((set, get) => ({
                     lastModified: file.lastModified,
                     artist: artistName,
                     tags: [],
+                    type: fileType,
                   };
 
                   await updateImageInDB(imageItem);

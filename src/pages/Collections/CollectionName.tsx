@@ -24,7 +24,7 @@ function CollectionName() {
     }
 
    // Getting images belong in the collection
-      const collectionImages = actualCollection.imagesCollected;
+      const collectionImages = actualCollection.filteredImagesCollected;
 
 
        const filteredImages = useSearch(collectionImages, {

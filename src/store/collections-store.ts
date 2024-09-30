@@ -6,12 +6,18 @@ export interface Collection {
     id: number,
     name: string,
     imagesCollected: ImageItem[]
+    filteredImagesCollected: ImageItem[]
 }
 
 interface CollectionStore {
   collections: Collection[];
+  imagesCollected: ImageItem[];
   getCollections: () => Promise<void>;
   setImagesCollections: (
+    collectionId: number,
+    newImagesCollection: ImageItem[]
+  ) => Promise<void>;
+  setImagesFilteredCollections: (
     collectionId: number,
     newImagesCollection: ImageItem[]
   ) => Promise<void>;
@@ -31,13 +37,15 @@ interface CollectionStore {
 
 export const useCollectionStore = create<CollectionStore>((set, get) => ({
   collections: [],
+  imagesCollected: [],
+  filteredImagesCollected: [],
   getCollections: async () => {
     try {
       await initDB(); // Start Database Collection
       const storedCollections: Collection[] = await getCollectionsFromDB();
 
       set({
-        collections: storedCollections,
+        collections: storedCollections
       });
     } catch (error) {
       console.error("Error fetching collections from IndexedDB:", error);
@@ -49,9 +57,10 @@ export const useCollectionStore = create<CollectionStore>((set, get) => ({
       set((state) => {
         const updateCollections = state.collections.map((collection) =>
           collection.id === collectionId
-            ? { ...collection, imagesCollected: newImagesCollection }
+            ? { ...collection, imagesCollected: newImagesCollection, filteredImagesCollected: newImagesCollection }
             : collection
         );
+        console.log(updateCollections)
         return { collections: updateCollections };
       });
       // Update CollectionDB
@@ -63,6 +72,8 @@ export const useCollectionStore = create<CollectionStore>((set, get) => ({
       console.error("Error updating collection in IndexedDB: ", error);
     }
   },
+
+  
 
   createCollection: async (name) => {
     try {
@@ -93,11 +104,13 @@ export const useCollectionStore = create<CollectionStore>((set, get) => ({
               lastModified: image.lastModified || new Date(),
               artist: image.artist || "Unknown Artist",
               tags: image.tags || [],
+              type: image.type,
             };
 
             return {
               ...collection,
               imagesCollected: [...collection.imagesCollected, newImage],
+              filteredImagesCollected: [...collection.filteredImagesCollected, newImage],
             };
           }
           return collection;

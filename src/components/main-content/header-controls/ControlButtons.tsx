@@ -12,7 +12,13 @@ interface ControlButtonsProps {
 
 function ControlButtons({images, collectionId, isCollectionPage, }: ControlButtonsProps) {
   const setImages = useImageStore((state) => state.setImages);
+  const setFilteredImages = useImageStore((state) => state.setFilteredImages);
   const setImagesCollections = useCollectionStore((state) => state.setImagesCollections)
+  const imagesCollected = useCollectionStore(
+      (state) => state.imagesCollected
+    );
+
+  const originalImages = useImageStore((state) => state.images)
 
   const [order, setOrder] = useState("date-c");
   const [sortBy, setSortBy] = useState("asc");
@@ -20,22 +26,28 @@ function ControlButtons({images, collectionId, isCollectionPage, }: ControlButto
   const [layout, setLayout] = useState("masonry");
   const [size, setSize] = useState("large");
 
- 
+/*   const sortedImages = useMemo(() => {
+    let sorted = [...images];
 
-  const sortedImages = useMemo(() => {
-    const sorted = [...images];
+    // Filter for images or gifs
 
-
+    if (media === "all-media") {
+      sorted = [...images];
+    } else if (media === "image") {
+      sorted = sorted.filter((image) => image.type === "image");
+    } else if (media === "gif") {
+      sorted = sorted.filter((image) => image.type === "gif");
+    }
 
     // Order by (name, date, dateCreated)
     if (order === "name") {
       sorted.sort((a, b) => a.name.localeCompare(b.name));
-      console.log("ordenado por nombre" ,sorted);
+      console.log("ordenado por nombre", sorted);
     } else if (order === "date-m") {
-      sorted.sort((a, b) => (b.lastModified ) - (a.lastModified ));
+      sorted.sort((a, b) => b.lastModified - a.lastModified);
       console.log("ordenado por fecha de modificacion", sorted);
     } else if (order === "date-c") {
-      sorted.sort((a, b) => (b.createdDate ) - (a.createdDate ));
+      sorted.sort((a, b) => b.createdDate - a.createdDate);
       console.log("ordenado por fecha de creacion", sorted);
     }
 
@@ -45,16 +57,100 @@ function ControlButtons({images, collectionId, isCollectionPage, }: ControlButto
     }
 
     return sorted;
-  }, [ sortBy, order, images]);
+  }, [ sortBy, order, media, images]); */
 
-  // Comparing if sortedImages are different of actualImages
+/*    const sortedImages = useMemo(() => {
+     const filteredImages = images.filter((image) => {
+       if (media === "all-media") return resetFilteredImages();
+       return media === image.type;
+     });
+
+     const orderedImages = filteredImages.sort((a, b) => {
+       if (order === "name") return a.name.localeCompare(b.name);
+       if (order === "date-m") return b.lastModified - a.lastModified;
+       return b.createdDate - a.createdDate;
+     });
+
+     if (sortBy === "desc") return orderedImages.reverse();
+     return orderedImages;
+   }, [sortBy, order, media, images, resetFilteredImages]);
+ */
+
+
+const sortedImages = useMemo(() => {
+  // Crear una copia de las imágenes originales para no modificar el array original
+   // Siempre empezamos desde las imágenes originales
+   let filtered
+
+  // Si estamos en una página de colección, filtrar por las imágenes de la colección
+  if (isCollectionPage && collectionId) {
+    filtered = [...imagesCollected];
+  }else{
+     filtered = [...originalImages];
+  }
+
+  // Filtrar por tipo de media (todo, imágenes, gifs)
+  switch (media) {
+    case "image":
+      filtered = filtered.filter((image) => image.type === "image");
+      break;
+    case "gif":
+      filtered = filtered.filter((image) => image.type === "gif");
+      break;
+    case "all-media":
+    default:
+      // No hacemos ningún filtro aquí, ya que "all-media" incluye todo
+      break;
+  }
+
+  // Ordenar por nombre, fecha de creación o fecha de modificación
+  filtered.sort((a, b) => {
+    switch (order) {
+      case "name":
+        return a.name.localeCompare(b.name);
+      case "date-m":
+        return b.lastModified - a.lastModified;
+      case "date-c":
+      default:
+        return b.createdDate - a.createdDate;
+    }
+  });
+
+  // Invertir el orden si es descendente
+  if (sortBy === "desc") {
+    filtered.reverse(); 
+  }
+
+  return filtered;
+}, [
+  sortBy,
+  order,
+  media,
+  images,
+  originalImages,
+  isCollectionPage,
+  collectionId,
+  imagesCollected
+]);
+
+
+
+   // Comparing if sortedImages are different of actualImages
   useEffect(() => {
-    const imagesChanged = sortedImages.some(
-      (image, index) => image.id !== images[index].id
-    );
+   
+    const imagesChanged = sortedImages.some((image, index) => {
+      const originalImage = images[index];
+
+      // Verifica si ambos elementos existen antes de compararlos
+      if (!image || !originalImage) {
+        return false; // O maneja el caso de manera diferente si es necesario
+      }
+
+      return image.id !== originalImage.id;
+    });
 
     if (imagesChanged) {
-      setImages(sortedImages);
+      setFilteredImages(sortedImages);
     }
 
     if (isCollectionPage && imagesChanged) {
@@ -66,8 +162,10 @@ function ControlButtons({images, collectionId, isCollectionPage, }: ControlButto
     }
 
     console.log(sortedImages)
-  }, [sortedImages, images, setImages, isCollectionPage, setImagesCollections, collectionId]);
+  }, [sortedImages, images, setImages, isCollectionPage, setImagesCollections, collectionId, setFilteredImages]);
 
+
+  
 
 
   return (
@@ -262,7 +360,10 @@ function ControlButtons({images, collectionId, isCollectionPage, }: ControlButto
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuRadioGroup value={media} onValueChange={setMedia}>
+          <DropdownMenuRadioGroup
+            value={media}
+            onValueChange={setMedia}
+          >
             <DropdownMenuRadioItem value="all-media">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -285,7 +386,7 @@ function ControlButtons({images, collectionId, isCollectionPage, }: ControlButto
               </svg>
               All media
             </DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="photos">
+            <DropdownMenuRadioItem value="image">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -306,7 +407,7 @@ function ControlButtons({images, collectionId, isCollectionPage, }: ControlButto
               </svg>
               Photos
             </DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="videos">
+            <DropdownMenuRadioItem value="gif">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -329,7 +430,7 @@ function ControlButtons({images, collectionId, isCollectionPage, }: ControlButto
                 <path d="M16 8l4 0" />
                 <path d="M16 16l4 0" />
               </svg>
-              Videos
+              Gifs
             </DropdownMenuRadioItem>
             {/*    <DropdownMenuRadioItem value="date-m">
                   Gifs

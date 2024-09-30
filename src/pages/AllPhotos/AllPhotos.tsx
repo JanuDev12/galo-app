@@ -8,7 +8,7 @@ import { useSearchContext } from '@/context/SearchContext';
 import { useEffect } from 'react';
 
 function AllPhotos() {
-  const images = useImageStore((state) => state.images);
+  const images = useImageStore((state) => state.filteredImages);
   const { searchTerm, setPlaceholder , tags} = useSearchContext();
   
    const filteredImages = useSearch(images, {

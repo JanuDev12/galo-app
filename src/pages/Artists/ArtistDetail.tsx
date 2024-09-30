@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom'
 function ArtistDetail() {
 
   const { artist } = useParams<{ artist: string}>()
-  const images = useImageStore((state) => state.images);
+  const images = useImageStore((state) => state.filteredImages);
  
   const { searchTerm, setPlaceholder, tags } = useSearchContext();
 
