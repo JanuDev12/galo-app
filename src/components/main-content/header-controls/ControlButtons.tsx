@@ -52,17 +52,19 @@ const sortedImages = useMemo(() => {
   }
 
   // Filter for image or gif
-  switch (media) {
-    case "image":
-      filtered = filtered.filter((image) => image.type === "image");
-      break;
-    case "gif":
-      filtered = filtered.filter((image) => image.type === "gif");
-      break;
-    case "all-media":
-    default:
-      break;
-  }
+   if (!isCollectionPage) {
+     switch (media) {
+       case "image":
+         filtered = filtered.filter((image) => image.type === "image");
+         break;
+       case "gif":
+         filtered = filtered.filter((image) => image.type === "gif");
+         break;
+       case "all-media":
+       default:
+         break;
+     }
+   }
 
   // Order by name, date or lastModified 
   filtered.sort((a, b) => {
@@ -97,8 +99,6 @@ const sortedImages = useMemo(() => {
 
    // Comparing if sortedImages are different of actualImages
   useEffect(() => {
-
-    console.log(sortedImages);
    
     const imagesChanged = sortedImages.some((image, index) => {
       const originalImage = images[index];
@@ -126,7 +126,6 @@ const sortedImages = useMemo(() => {
        }
     }
 
-    console.log(sortedImages)
   }, [sortedImages, images, setImages, isCollectionPage, setImagesCollections, collectionId, setFilteredImages,setFilteredImagesCollections]);
 
 
