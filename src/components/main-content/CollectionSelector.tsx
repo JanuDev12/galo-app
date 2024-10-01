@@ -1,6 +1,6 @@
-import { ImageItem } from '@/store/image-store';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { useCollectionStore } from '@/store/collections-store';
+import { ImageItem } from '@/type';
 import { IconChevronDown } from '@tabler/icons-react';
 
 interface CollectionSelectorProps {

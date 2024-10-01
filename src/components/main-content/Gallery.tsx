@@ -1,5 +1,5 @@
 import { useImageStore } from "@/store/image-store";
-import { Masonry, useInfiniteLoader } from "masonic"
+import { Masonry} from "masonic"
 import { useCallback, useEffect,  useMemo,  useState } from "react";
 import { useCollectionStore } from "@/store/collections-store";
 import EditImageDialog from "./EditImageDialog";
@@ -89,16 +89,18 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
   }, [size]);
  
   return (
-    <Masonry
-      key={images.length}
-      items={images}
-      render={MasonryCard}
-      columnGutter={16}
-      columnWidth={170}
-      overscanBy={images.length}
-      maxColumnCount={maxColumnCount}
-    ></Masonry>
-  );
+     <Masonry
+     className="max-h-40"
+        key={images.length}
+        items={images}
+        render={MasonryCard}
+        columnGutter={16}
+        columnWidth={170}
+        overscanBy={6}
+        maxColumnCount={maxColumnCount}
+      ></Masonry>
+  )
+
 }
 
 

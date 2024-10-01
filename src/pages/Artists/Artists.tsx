@@ -4,7 +4,7 @@ import { useSearch } from '@/hooks/useSearch';
 import { useImageStore } from '@/store/image-store';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconUserHeart } from '@tabler/icons-react';
+import { IconUser, IconUserHeart } from '@tabler/icons-react';
 
 function Artists() {
 
@@ -42,22 +42,8 @@ function Artists() {
             onClick={() => navigate(`/artists/${artist.name}`)}
           >
             <div className=" rounded-2xl overflow-hidden">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="30"
-                height="30"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.75"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-user"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-                <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-              </svg>
+              <IconUser size={30} stroke={1.75}/>
+  
             </div>
 
             <div className="w-full flex items-center justify-between">

@@ -5,7 +5,7 @@ import AllPhotos from '../../pages/AllPhotos/AllPhotos';
 import CollectionName from '@/pages/Collections/CollectionName';
 import ArtistDetail from '@/pages/Artists/ArtistDetail';
 import { useImageStore } from '@/store/image-store';
-import { useEffect } from 'react';
+import { useEffect} from 'react';
 import { useCollectionStore } from '@/store/collections-store';
 
 function Content() {
@@ -23,19 +23,19 @@ function Content() {
   }, [])
 
   return (
-    <main className="content  bg-[--color-primary] overflow-scroll overflow-x-hidden">
-      <div className="h-full w-full">
-        <div className="flex flex-col mx-16 my-7 gap-3">
-          <Routes>
-            <Route path="/" element={<AllPhotos />} />
-            <Route path="/collections" element={<Collections />} />
-            <Route path="/artist" element={<Artists />} />
+    <main className="content ml-48 mt-16">
+        
+          <div className="flex flex-col mx-16 my-7 gap-3">
+            <Routes>
+              <Route path="/" element={<AllPhotos />} />
+              <Route path="/collections" element={<Collections />} />
+              <Route path="/artist" element={<Artists />} />
 
-            <Route path="/collections/:id" element={<CollectionName />} />
-            <Route path="/artists/:artist" element={<ArtistDetail />} />
-          </Routes>
-        </div>
-      </div>
+              <Route path="/collections/:id" element={<CollectionName />} />
+              <Route path="/artists/:artist" element={<ArtistDetail />} />
+            </Routes>
+          </div>
+        
     </main>
   );
 }

@@ -5,7 +5,6 @@ import Header from './components/header/Header';
 import Content from './components/main-content/Content';
 import { SearchProvider } from './context/SearchContext';
 
-
 function App() {
 
   return (
@@ -13,7 +12,7 @@ function App() {
       <SearchProvider>
         <div className="h-screen">
           <div className="layout h-full w-full ">
-            <Header />
+             <Header />
             <Sidebar />
             <Content />
           </div>

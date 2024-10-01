@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import Logo from "./Logo";
 import SidebarItem from "./SidebarItem";
 import { useSearchContext } from "@/context/SearchContext";
-import { IconLibraryPhoto, IconFolders, IconUserHeart } from "@tabler/icons-react";
+import { IconLibraryPhoto, IconFolders, IconUserHeart, IconPlus } from "@tabler/icons-react";
 
 const sidebarItems = [
   {
@@ -46,18 +46,8 @@ function Sidebar() {
     
    }
 
-/* const tagColors: Record<string, string> = {
-  Furry: "text-amber-500",
-  Nature: "text-lime-500",
-  NSFW: "text-red-500",
-  FOX: "text-orange-500",
-  Ocean: "text-indigo-400",
-  Sky: "text-sky-400",
-};
- */
-
   return (
-    <aside className="sidebar bg-[--color-secondary] w-48 h-full">
+    <aside className="sidebar bg-[--color-secondary] w-48 h-full fixed">
       <Logo />
       <nav className="px-3 py-4">
         <ul className="flex flex-col gap-1">
@@ -82,22 +72,7 @@ function Sidebar() {
             {/*   ADD TAGS BUTTON // NOT WORKING YET*/}
 
               <Button variant="outline" className="py-1 h-6 px-2 ">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="icon icon-tabler icons-tabler-outline icon-tabler-plus"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path d="M12 5l0 14" />
-                  <path d="M5 12l14 0" />
-                </svg>
+                <IconPlus size={14} stroke={2}/>
               </Button>
             </div>
 

@@ -3,7 +3,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenu
 import { useCollectionStore } from "@/store/collections-store";
 import {  useImageStore } from "@/store/image-store";
 import { ImageItem } from "@/type";
-import { IconArrowNarrowDown, IconArrowNarrowUp, IconArrowsSort, IconCalendarClock, IconCalendarCog, IconChevronDown, IconFilter, IconLayout2, IconLetterA, IconLetterASmall, IconMovie, IconPhotoVideo, IconSquare } from "@tabler/icons-react";
+import { IconArrowNarrowDown, IconArrowNarrowUp, IconArrowsSort, IconCalendarClock, IconCalendarCog, IconChevronDown, IconFilter, IconLayout2, IconLetterA, IconMovie, IconPhotoVideo, IconSquare } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 
 interface ControlButtonsProps {
