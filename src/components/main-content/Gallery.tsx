@@ -1,11 +1,10 @@
-import { ImageItem, useImageStore } from "@/store/image-store";
-import { Masonry } from "masonic"
-import { useCallback, useEffect,  useState } from "react";
+import { useImageStore } from "@/store/image-store";
+import { Masonry, useInfiniteLoader } from "masonic"
+import { useCallback, useEffect,  useMemo,  useState } from "react";
 import { useCollectionStore } from "@/store/collections-store";
 import EditImageDialog from "./EditImageDialog";
 import CollectionSelector from "./CollectionSelector";
-
-
+import { ImageItem } from "@/type";
 
 interface MasonryCardProps {
   data: ImageItem;
@@ -74,6 +73,20 @@ function MasonryCard({ data }: MasonryCardProps) {
 
 // eslint-disable-next-line react/prop-types
 const Gallery: React.FC<GalleryProps> = ({ images }) => {
+
+  const size = useImageStore((state) => state.size)
+
+  const maxColumnCount = useMemo(() => {
+    switch (size) {
+      case "small":
+        return 5;
+      case "medium":
+        return 4;
+      case "large":
+      default:
+        return 3;
+    }
+  }, [size]);
  
   return (
     <Masonry
@@ -82,12 +95,11 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
       render={MasonryCard}
       columnGutter={16}
       columnWidth={170}
-      overscanBy={40}
-      maxColumnCount={4}
+      overscanBy={images.length}
+      maxColumnCount={maxColumnCount}
     ></Masonry>
   );
 }
-
 
 
 export default Gallery

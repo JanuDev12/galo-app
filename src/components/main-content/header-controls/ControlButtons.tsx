@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useCollectionStore } from "@/store/collections-store";
-import { ImageItem, useImageStore } from "@/store/image-store";
+import {  useImageStore } from "@/store/image-store";
+import { ImageItem } from "@/type";
+import { IconArrowNarrowDown, IconArrowNarrowUp, IconArrowsSort, IconCalendarClock, IconCalendarCog, IconChevronDown, IconFilter, IconLayout2, IconLetterA, IconLetterASmall, IconMovie, IconPhotoVideo, IconSquare } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 
 interface ControlButtonsProps {
@@ -14,82 +16,42 @@ function ControlButtons({images, collectionId, isCollectionPage, }: ControlButto
   const setImages = useImageStore((state) => state.setImages);
   const setFilteredImages = useImageStore((state) => state.setFilteredImages);
   const setImagesCollections = useCollectionStore((state) => state.setImagesCollections)
-  const imagesCollected = useCollectionStore(
-      (state) => state.imagesCollected
-    );
+  const setFilteredImagesCollections = useCollectionStore((state) => state.setFilteredImagesCollections)
+  
+  const setMaxColumnCount = useImageStore((state) => state.setSize);
 
   const originalImages = useImageStore((state) => state.images)
+  const collections = useCollectionStore((state) => state.collections)
 
   const [order, setOrder] = useState("date-c");
   const [sortBy, setSortBy] = useState("asc");
   const [media, setMedia] = useState("all-media");
   const [layout, setLayout] = useState("masonry");
-  const [size, setSize] = useState("large");
+  const [size, setSize] = useState("medium");
 
-/*   const sortedImages = useMemo(() => {
-    let sorted = [...images];
-
-    // Filter for images or gifs
-
-    if (media === "all-media") {
-      sorted = [...images];
-    } else if (media === "image") {
-      sorted = sorted.filter((image) => image.type === "image");
-    } else if (media === "gif") {
-      sorted = sorted.filter((image) => image.type === "gif");
-    }
-
-    // Order by (name, date, dateCreated)
-    if (order === "name") {
-      sorted.sort((a, b) => a.name.localeCompare(b.name));
-      console.log("ordenado por nombre", sorted);
-    } else if (order === "date-m") {
-      sorted.sort((a, b) => b.lastModified - a.lastModified);
-      console.log("ordenado por fecha de modificacion", sorted);
-    } else if (order === "date-c") {
-      sorted.sort((a, b) => b.createdDate - a.createdDate);
-      console.log("ordenado por fecha de creacion", sorted);
-    }
-
-    // Order by (Ascending, Descending)
-    if (sortBy === "desc") {
-      sorted.reverse();
-    }
-
-    return sorted;
-  }, [ sortBy, order, media, images]); */
-
-/*    const sortedImages = useMemo(() => {
-     const filteredImages = images.filter((image) => {
-       if (media === "all-media") return resetFilteredImages();
-       return media === image.type;
-     });
-
-     const orderedImages = filteredImages.sort((a, b) => {
-       if (order === "name") return a.name.localeCompare(b.name);
-       if (order === "date-m") return b.lastModified - a.lastModified;
-       return b.createdDate - a.createdDate;
-     });
-
-     if (sortBy === "desc") return orderedImages.reverse();
-     return orderedImages;
-   }, [sortBy, order, media, images, resetFilteredImages]);
- */
+  useEffect(() => {
+    setMaxColumnCount(size)
+  }, [size])
 
 
 const sortedImages = useMemo(() => {
-  // Crear una copia de las imágenes originales para no modificar el array original
-   // Siempre empezamos desde las imágenes originales
    let filtered
 
-  // Si estamos en una página de colección, filtrar por las imágenes de la colección
+  // If in Collection Page, use the images in collection
   if (isCollectionPage && collectionId) {
-    filtered = [...imagesCollected];
+       /* const actualCollection = collections.find(
+         (col) => col.id === collectionId
+       );
+      
+        filtered = actualCollection?.imagesCollected
+ */
+        filtered = [...images]
+      
   }else{
      filtered = [...originalImages];
   }
 
-  // Filtrar por tipo de media (todo, imágenes, gifs)
+  // Filter for image or gif
   switch (media) {
     case "image":
       filtered = filtered.filter((image) => image.type === "image");
@@ -99,11 +61,10 @@ const sortedImages = useMemo(() => {
       break;
     case "all-media":
     default:
-      // No hacemos ningún filtro aquí, ya que "all-media" incluye todo
       break;
   }
 
-  // Ordenar por nombre, fecha de creación o fecha de modificación
+  // Order by name, date or lastModified 
   filtered.sort((a, b) => {
     switch (order) {
       case "name":
@@ -116,7 +77,7 @@ const sortedImages = useMemo(() => {
     }
   });
 
-  // Invertir el orden si es descendente
+  // If desc, reverse
   if (sortBy === "desc") {
     filtered.reverse(); 
   }
@@ -126,35 +87,39 @@ const sortedImages = useMemo(() => {
   sortBy,
   order,
   media,
-  images,
   originalImages,
   isCollectionPage,
   collectionId,
-  imagesCollected
+  images
 ]);
 
 
 
    // Comparing if sortedImages are different of actualImages
   useEffect(() => {
+
+    console.log(sortedImages);
    
     const imagesChanged = sortedImages.some((image, index) => {
       const originalImage = images[index];
 
-      // Verifica si ambos elementos existen antes de compararlos
+      //  Verify if both images exist
       if (!image || !originalImage) {
-        return false; // O maneja el caso de manera diferente si es necesario
+        return false; 
       }
 
       return image.id !== originalImage.id;
     });
 
+    // If has changed, sort images
     if (imagesChanged) {
       setFilteredImages(sortedImages);
     }
 
+    // if is collectionPage, sorted for the collection.
     if (isCollectionPage && imagesChanged) {
        if (collectionId !== undefined) {
+      /*   setFilteredImagesCollections(sortedImages) */
          setImagesCollections(collectionId, sortedImages).catch(console.error);
        } else {
          console.error("Collection ID is undefined.");
@@ -162,7 +127,7 @@ const sortedImages = useMemo(() => {
     }
 
     console.log(sortedImages)
-  }, [sortedImages, images, setImages, isCollectionPage, setImagesCollections, collectionId, setFilteredImages]);
+  }, [sortedImages, images, setImages, isCollectionPage, setImagesCollections, collectionId, setFilteredImages,setFilteredImagesCollections]);
 
 
   
@@ -173,152 +138,33 @@ const sortedImages = useMemo(() => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="flex gap-3 px-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              className="icon icon-tabler icons-tabler-outline icon-tabler-arrows-sort"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M3 9l4 -4l4 4m-4 -4v14" />
-              <path d="M21 15l-4 4l-4 -4m4 4v-14" />
-            </svg>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M6 9l6 6l6 -6" />
-            </svg>
+            <IconArrowsSort size={22} stroke={1.3} />
+            <IconChevronDown size={15} stroke={1} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuRadioGroup value={order} onValueChange={setOrder}>
             <DropdownMenuRadioItem value="date-c">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-calendar-clock"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M10.5 21h-4.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v3" />
-                <path d="M16 3v4" />
-                <path d="M8 3v4" />
-                <path d="M4 11h10" />
-                <path d="M18 18m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
-                <path d="M18 16.5v1.5l.5 .5" />
-              </svg>
+              <IconCalendarClock size={20} stroke={1.6} />
               Date created
             </DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="date-m">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-calendar-cog"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M12 21h-6a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v5" />
-                <path d="M16 3v4" />
-                <path d="M8 3v4" />
-                <path d="M4 11h16" />
-                <path d="M19.001 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                <path d="M19.001 15.5v1.5" />
-                <path d="M19.001 21v1.5" />
-                <path d="M22.032 17.25l-1.299 .75" />
-                <path d="M17.27 20l-1.3 .75" />
-                <path d="M15.97 17.25l1.3 .75" />
-                <path d="M20.733 20l1.3 .75" />
-              </svg>
+              <IconCalendarCog size={20} stroke={1.6} />
               Date modified
             </DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="name">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-letter-a"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M7 20v-12a4 4 0 0 1 4 -4h2a4 4 0 0 1 4 4v12" />
-                <path d="M7 13l10 0" />
-              </svg>
+              <IconLetterA size={18} stroke={1.5} />
               Name
             </DropdownMenuRadioItem>
           </DropdownMenuRadioGroup>
           <DropdownMenuSeparator />
           <DropdownMenuRadioGroup value={sortBy} onValueChange={setSortBy}>
             <DropdownMenuRadioItem value="asc">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-up"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M12 5l0 14" />
-                <path d="M16 9l-4 -4" />
-                <path d="M8 9l4 -4" />
-              </svg>
+              <IconArrowNarrowUp size={20} stroke={1.6} />
               Ascending
             </DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="desc">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-down"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M12 5l0 14" />
-                <path d="M16 15l-4 4" />
-                <path d="M8 15l4 4" />
-              </svg>
+              <IconArrowNarrowDown size={20} stroke={1.6} />
               Descending
             </DropdownMenuRadioItem>
           </DropdownMenuRadioGroup>
@@ -327,63 +173,14 @@ const sortedImages = useMemo(() => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="flex gap-3 px-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              className="icon icon-tabler icons-tabler-outline icon-tabler-filter"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z" />
-            </svg>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M6 9l6 6l6 -6" />
-            </svg>
+            <IconFilter size={22} stroke={1.3} />
+            <IconChevronDown size={15} stroke={1} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuRadioGroup
-            value={media}
-            onValueChange={setMedia}
-          >
+          <DropdownMenuRadioGroup value={media} onValueChange={setMedia}>
             <DropdownMenuRadioItem value="all-media">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-photo-video"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M9 15h-3a3 3 0 0 1 -3 -3v-6a3 3 0 0 1 3 -3h6a3 3 0 0 1 3 3v3" />
-                <path d="M9 9m0 3a3 3 0 0 1 3 -3h6a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-6a3 3 0 0 1 -3 -3z" />
-                <path d="M3 12l2.296 -2.296a2.41 2.41 0 0 1 3.408 0l.296 .296" />
-                <path d="M14 13.5v3l2.5 -1.5z" />
-                <path d="M7 6v.01" />
-              </svg>
+              <IconPhotoVideo size={20} stroke={1.6} />
               All media
             </DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="image">
@@ -408,76 +205,21 @@ const sortedImages = useMemo(() => {
               Photos
             </DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="gif">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-movie"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" />
-                <path d="M8 4l0 16" />
-                <path d="M16 4l0 16" />
-                <path d="M4 8l4 0" />
-                <path d="M4 16l4 0" />
-                <path d="M4 12l16 0" />
-                <path d="M16 8l4 0" />
-                <path d="M16 16l4 0" />
-              </svg>
+              <IconMovie size={20} stroke={1.6} />
               Gifs
             </DropdownMenuRadioItem>
-            {/*    <DropdownMenuRadioItem value="date-m">
-                  Gifs
-                </DropdownMenuRadioItem> */}
           </DropdownMenuRadioGroup>
         </DropdownMenuContent>
       </DropdownMenu>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="flex gap-3 px-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              className="icon icon-tabler icons-tabler-outline icon-tabler-layout-2"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M4 4m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v1a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
-              <path d="M4 13m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v3a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
-              <path d="M14 4m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v3a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
-              <path d="M14 15m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v1a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
-            </svg>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M6 9l6 6l6 -6" />
-            </svg>
+            <IconLayout2 size={22} stroke={1.3} />
+            <IconChevronDown size={15} stroke={1} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuRadioGroup value={layout} onValueChange={setLayout}>
+          {/* <DropdownMenuRadioGroup value={layout} onValueChange={setLayout}>
             <DropdownMenuRadioItem value="masonry">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -521,7 +263,7 @@ const sortedImages = useMemo(() => {
               River
             </DropdownMenuRadioItem>
           </DropdownMenuRadioGroup>
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator /> */}
           <DropdownMenuRadioGroup value={size} onValueChange={setSize}>
             <DropdownMenuRadioItem value="small">
               <svg
@@ -564,21 +306,7 @@ const sortedImages = useMemo(() => {
               Medium
             </DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="large">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-square"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M3 3m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
-              </svg>
+              <IconSquare size={18} stroke={1.5} />
               Large
             </DropdownMenuRadioItem>
           </DropdownMenuRadioGroup>

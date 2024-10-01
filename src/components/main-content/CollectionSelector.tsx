@@ -1,6 +1,7 @@
 import { ImageItem } from '@/store/image-store';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { useCollectionStore } from '@/store/collections-store';
+import { IconChevronDown } from '@tabler/icons-react';
 
 interface CollectionSelectorProps {
   selectedCollections: number[];
@@ -42,7 +43,6 @@ const CollectionSelector = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex justify-center w-28 h-6 mx-auto gap-1 items-center">
-        
         {/* SHOW THE COLLECTION NAME IF EXIST */}
 
         {selectedCollections.length > 0 ? (
@@ -52,30 +52,17 @@ const CollectionSelector = ({
                 const collection = collections.find(
                   (col) => col.id === collectionId
                 );
-                return collection?.name ?? ""; 
+                return collection?.name ?? "";
               })
               .slice(-1)
               .join(", ")}
           </span>
         ) : (
-          <span className="text-sm"></span> // If collection not exist show nothing for default 
+          <span className="text-sm"></span> // If collection not exist show nothing for default
         )}
 
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="15"
-          height="15"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <path d="M6 9l6 6l6 -6" />
-        </svg>
+        <IconChevronDown size={15} stroke={1} />
+  
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-40 rounded-2xl px-3 border-transparent bg-white/10 backdrop-blur z-auto">
@@ -88,7 +75,6 @@ const CollectionSelector = ({
             const isAdded = selectedCollections.includes(collection.id);
             return (
               <label key={collection.id}>
-             
                 <input
                   type="checkbox"
                   value={collection.id}
@@ -101,7 +87,6 @@ const CollectionSelector = ({
               </label>
             );
           })}
-
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

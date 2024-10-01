@@ -1,26 +1,16 @@
 import { create } from "zustand"
 import { addCollectionToDB, getCollectionsFromDB, initDB, updateCollectionInDB, deleteCollectionFromDB } from "@/db/db-collections";
-import { ImageItem } from "./image-store";
-
-export interface Collection {
-    id: number,
-    name: string,
-    imagesCollected: ImageItem[]
-    filteredImagesCollected: ImageItem[]
-}
+import { Collection, ImageItem } from "@/type";
 
 interface CollectionStore {
   collections: Collection[];
-  imagesCollected: ImageItem[];
+  filteredImagesCollected: ImageItem[];
   getCollections: () => Promise<void>;
   setImagesCollections: (
     collectionId: number,
     newImagesCollection: ImageItem[]
   ) => Promise<void>;
-  setImagesFilteredCollections: (
-    collectionId: number,
-    newImagesCollection: ImageItem[]
-  ) => Promise<void>;
+  setFilteredImagesCollections: (filteredImages: ImageItem[]) => void;
   createCollection: (name: string) => Promise<void>;
   addImageToCollection: (
     collectionId: number,
@@ -43,10 +33,12 @@ export const useCollectionStore = create<CollectionStore>((set, get) => ({
     try {
       await initDB(); // Start Database Collection
       const storedCollections: Collection[] = await getCollectionsFromDB();
-
       set({
-        collections: storedCollections
-      });
+        collections: storedCollections,
+        filteredImagesCollected: storedCollections.flatMap(
+          (collection) => collection.imagesCollected
+        ),
+      })
     } catch (error) {
       console.error("Error fetching collections from IndexedDB:", error);
     }
@@ -57,10 +49,10 @@ export const useCollectionStore = create<CollectionStore>((set, get) => ({
       set((state) => {
         const updateCollections = state.collections.map((collection) =>
           collection.id === collectionId
-            ? { ...collection, imagesCollected: newImagesCollection, filteredImagesCollected: newImagesCollection }
+            ? { ...collection, imagesCollected: newImagesCollection }
             : collection
         );
-        console.log(updateCollections)
+        console.log(updateCollections);
         return { collections: updateCollections };
       });
       // Update CollectionDB
@@ -73,7 +65,9 @@ export const useCollectionStore = create<CollectionStore>((set, get) => ({
     }
   },
 
-  
+  setFilteredImagesCollections: (filteredImages) => {
+    set({ filteredImagesCollected: filteredImages });
+  },
 
   createCollection: async (name) => {
     try {
@@ -110,7 +104,6 @@ export const useCollectionStore = create<CollectionStore>((set, get) => ({
             return {
               ...collection,
               imagesCollected: [...collection.imagesCollected, newImage],
-              filteredImagesCollected: [...collection.filteredImagesCollected, newImage],
             };
           }
           return collection;

@@ -1,21 +1,14 @@
 import { getImagesFromDB, updateImageInDB, deleteImageFromDB , initDB } from "@/db/db-image";
+import { ImageItem } from "@/type";
 import { determineFileType } from "@/utils/fileUtils";
 import {create} from "zustand"
 
-export interface ImageItem {
-  id: number;
-  name: string;
-  src: string;
-  createdDate: number;
-  lastModified: number;
-  artist: string;
-  tags: string[];
-  type: "image" | "video" | "gif";
-}
 
 interface ImageStore {
   images: ImageItem[];
   filteredImages: ImageItem[];
+  size: string;
+  setSize: (count: string) => void
   setImages: (newImages: ImageItem[]) => void;
   setFilteredImages: (newImages: ImageItem[]) => void;
   fetchImages: () => Promise<void>;
@@ -32,11 +25,14 @@ interface ImageStore {
 export const useImageStore = create<ImageStore>((set, get) => ({
   images: [],
   filteredImages: [],
+  size: "small" || "medium || large",
   setImages: (newImages) => set({ images: newImages }),
 
   setFilteredImages: (newImages) => {
     set({ filteredImages: newImages });
   },
+
+  setSize: (count) => set({ size: count }),
 
   fetchImages: async () => {
     try {
@@ -130,14 +126,17 @@ export const useImageStore = create<ImageStore>((set, get) => ({
     }
   },
 
-  deleteImage: async (imageId) => {
+   deleteImage: async (imageId) => {
     try {
       await deleteImageFromDB(imageId);
+
       set((state) => ({
         images: state.images.filter((image) => image.id !== imageId),
       }));
     } catch (error) {
       console.error("Error al eliminar la imagen de la base de datos:", error);
     }
-  },
+  }, 
+
+
 }));
