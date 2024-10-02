@@ -23,9 +23,9 @@ function Content() {
   }, [])
 
   return (
-    <main className="content ml-48 mt-16">
+    <main className="content mt-16 lg:ml-48">
         
-          <div className="flex flex-col mx-16 my-7 gap-3">
+          <div className="flex flex-col mx-5 sm:mx-8 my-7 gap-3 md:mx-16">
             <Routes>
               <Route path="/" element={<AllPhotos />} />
               <Route path="/collections" element={<Collections />} />

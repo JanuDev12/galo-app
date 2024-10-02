@@ -34,11 +34,11 @@ function Artists() {
 
   return (
     <Layout title="Artists" icon={<IconUserHeart size={24} stroke={2} />}>
-      <div className="grid grid-cols-4 gap-x-5 gap-y-7">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-4 md:gap-y-7 lg:grid-cols-4">
         {filteredArtist.map((artist) => (
           <div
             key={artist.name}
-            className="p-4 bg-[--color-secondary] border border-[--color-gray] rounded  cursor-pointer flex  items-center gap-3"
+            className="px-3 py-4 bg-[--color-secondary] border border-[--color-gray] rounded  cursor-pointer flex  items-center gap-3"
             onClick={() => navigate(`/artists/${artist.name}`)}
           >
             <div className=" rounded-2xl overflow-hidden">

@@ -1,7 +1,4 @@
-function Logo() {
-  return (
-    <a className="flex items-center gap-3 py-[18px] px-6 lg:py-5" href="/">
-      <svg
+ <svg
         width="22"
         height="22"
         viewBox="0 0 200 200"
@@ -33,9 +30,3 @@ function Logo() {
           </clipPath>
         </defs>
       </svg>
-      <span className="text-base font-medium lg:text-lg">Galo</span>
-    </a>
-  );
-}
-
-export default Logo

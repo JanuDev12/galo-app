@@ -87,7 +87,7 @@ function Collections() {
             return (
               <div
                 key={collection.id}
-                className="max-w-52 max-h-36 cursor-pointer group relative"
+                className="w-full md:max-w-48 lg:max-w-52 max-h-36 cursor-pointer group relative"
                 onClick={() => navigate(`/collections/${collection.id}`)}
               >
                 <div className="flex gap-[2px] w-full h-full rounded-xl overflow-hidden relative">

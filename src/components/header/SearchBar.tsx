@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Input } from '../ui/input';
 import { useSearchContext } from '@/context/SearchContext';
+import { Button } from '../ui/button';
+import { IconSearch } from '@tabler/icons-react';
 
 function SearchBar() {
-
   const { searchTerm, setSearchTerm, placeholder, tags, setTags} = useSearchContext();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleTagRemove = (tag: string) => {
     setTags(tags.filter((t) => t !== tag))
@@ -16,9 +18,20 @@ function SearchBar() {
   };
   return (
     <>
+      <Button
+        variant="outline"
+        className="lg:hidden px-1 h-7 w-7 fixed top-4 left-30 z-30"
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+      >
+        <IconSearch size={24} stroke={2} />
+      </Button>
       <Input
         placeholder={placeholder}
-        className="w-72 inline-flex"
+        className={`w-40 md:w-72 transition-transform fixed lg:static lg:block ${
+          isSidebarOpen
+            ? "top-20 right-16 "
+            : "-top-20 lg:top-0 "
+        }`}
         value={searchTerm}
         onChange={handleSearchChange}
       />

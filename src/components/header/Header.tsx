@@ -4,7 +4,7 @@ import SearchBar from "./SearchBar";
 
 function Header() {
   return (
-    <header className="header py-3 px-3 bg-[--color-secondary] flex items-center justify-between fixed w-[85.5%] ml-48 z-20">
+    <header className="header py-3 px-3 bg-[--color-secondary] flex items-center justify-between fixed ml-36 sm:ml-44 md:ml-48 z-20 lg:w-[85.5%] md:w-[75%] w-[65%]">
       <div>
         <SearchBar />
       </div>

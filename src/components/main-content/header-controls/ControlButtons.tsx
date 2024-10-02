@@ -133,10 +133,10 @@ const sortedImages = useMemo(() => {
 
 
   return (
-    <div className="flex gap-2">
+    <div className="flex md:gap-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="flex gap-3 px-2">
+          <Button variant="ghost" className="flex px-0 sm:px-1 sm:gap-1 md:gap-3 md:px-3">
             <IconArrowsSort size={22} stroke={1.3} />
             <IconChevronDown size={15} stroke={1} />
           </Button>
@@ -171,7 +171,7 @@ const sortedImages = useMemo(() => {
       </DropdownMenu>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="flex gap-3 px-2">
+          <Button variant="ghost" className="flex px-1 gap-1 md:gap-3 md:px-3">
             <IconFilter size={22} stroke={1.3} />
             <IconChevronDown size={15} stroke={1} />
           </Button>
@@ -212,7 +212,7 @@ const sortedImages = useMemo(() => {
       </DropdownMenu>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="flex gap-3 px-2">
+          <Button variant="ghost" className="flex px-1 gap-1 md:gap-3 md:px-3">
             <IconLayout2 size={22} stroke={1.3} />
             <IconChevronDown size={15} stroke={1} />
           </Button>
