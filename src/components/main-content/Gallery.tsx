@@ -96,7 +96,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
         render={MasonryCard}
         columnGutter={16}
         columnWidth={170}
-        overscanBy={6}
+        overscanBy={5}
         maxColumnCount={maxColumnCount}
       ></Masonry>
   )

@@ -8,12 +8,13 @@ interface ImageStore {
   images: ImageItem[];
   filteredImages: ImageItem[];
   size: string;
-  setSize: (count: string) => void
+  setSize: (count: string) => void;
   setImages: (newImages: ImageItem[]) => void;
   setFilteredImages: (newImages: ImageItem[]) => void;
   fetchImages: () => Promise<void>;
   handleImageUploaded: (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
+    artistFromEvent: string
   ) => Promise<void>;
   updateImageAttributes: (
     imageId: number,
@@ -48,11 +49,12 @@ export const useImageStore = create<ImageStore>((set, get) => ({
   },
 
   // logic to handle images loaded for the user
-  handleImageUploaded: async (event) => {
+  handleImageUploaded: async (event, artistFromEvent: string) => {
     const files = event.target.files;
     if (files && files.length > 0) {
       // Creating array to store promises for each images
       const imagesUploaded = Array.from(files).map(async (file, index) => {
+     console.log("artista de evento" , artistFromEvent)
         if (file && file instanceof Blob) {
           // Reading the promise for each archive
           return new Promise<ImageItem>((resolve, reject) => {
@@ -62,11 +64,6 @@ export const useImageStore = create<ImageStore>((set, get) => ({
                 const imageSrc = reader.result;
                 if (typeof imageSrc === "string") {
                   // adding image to databe and state
-                  const artistName =
-                    window.prompt(
-                      "Ingresa el nombre del artista:",
-                      "Unknown"
-                    ) ?? "Unknown Artist";
                   const fileType = determineFileType(file);
 
                   const imageItem = {
@@ -75,7 +72,7 @@ export const useImageStore = create<ImageStore>((set, get) => ({
                     src: imageSrc,
                     createdDate: Date.now(),
                     lastModified: file.lastModified,
-                    artist: artistName,
+                    artist: artistFromEvent,
                     tags: [],
                     type: fileType,
                   };
