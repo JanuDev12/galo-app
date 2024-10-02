@@ -76,17 +76,27 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
 
   const size = useImageStore((state) => state.size)
 
-  const maxColumnCount = useMemo(() => {
-    switch (size) {
-      case "small":
-        return 5;
-      case "medium":
-        return 4;
-      case "large":
-      default:
-        return 3;
-    }
-  }, [size]);
+   const maxColumnCount = useMemo(() => {
+     switch (size) {
+       case "small":
+         return 5;
+       case "medium":
+         return 4;
+       case "large":
+       default:
+         return 3;
+     }
+   }, [size]);
+ 
+
+  if(images.length <= 0) {
+    return (
+      <p className="text-lg text-[--color-light-tertiary]">
+        Try uploading a image! Just remenber recharge the page when you upload one.
+      </p>
+    );
+  }
+
  
   return (
      <Masonry

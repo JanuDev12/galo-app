@@ -58,7 +58,7 @@ function Sidebar() {
         <IconMenu size={20} stroke={2} />
       </Button>
       <aside
-        className="bg-[--color-secondary] h-16 w-36 fixed sm:w-44 md:w-48 lg:h-full z-20 transition-transform "
+        className="bg-[--color-secondary] h-16 w fixed sm:w-44 md:w-48 lg:h-full z-20 transition-transform "
       >
         <Logo />
         <nav

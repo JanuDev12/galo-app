@@ -92,12 +92,12 @@ function ButtonFileUpload() {
 
       {/* This dialog for select artist & confirm upload*/}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-[500px]">
+        <DialogContent className="max-w-[530px]">
           <DialogTitle className="text-lg font-semibold">
             Select Artist for Images
           </DialogTitle>
 
-          <div className="max-h-40 overflow-scroll flex flex-wrap gap-2 mb-4">
+          <div className="max-h-40 overflow-scroll flex flex-wrap gap-2 mb-4 scrollbar overflow-x-hidden">
             {imagePreviews.length > 0 &&
               imagePreviews.map((src, index) => (
                 <img
