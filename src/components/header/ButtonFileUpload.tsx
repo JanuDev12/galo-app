@@ -1,7 +1,7 @@
 import { useImageStore } from '@/store/image-store';
 import { Button } from '../ui/button'
 import { IconPhotoPlus } from '@tabler/icons-react';
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { Dialog, DialogContent, DialogTitle} from '../ui/dialog';
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Input } from '../ui/input';
@@ -44,8 +44,7 @@ function ButtonFileUpload() {
     if (files) {
       const artistName = newArtistName || selectedArtist || "Unknown";
       try {
-        const event = { target: { files } }; // HandleImageUploaded expect event so we simulate a event
-        await handleImageUploaded(event, artistName);
+        await handleImageUploaded(files, artistName);
         setFiles(null); // Clear files
         setImagePreviews([]); //  Clear previsualizations
         setIsDialogOpen(false); // Close Dialog

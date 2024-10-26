@@ -13,7 +13,7 @@ interface ImageStore {
   setFilteredImages: (newImages: ImageItem[]) => void;
   fetchImages: () => Promise<void>;
   handleImageUploaded: (
-    event: React.ChangeEvent<HTMLInputElement>,
+    file: FileList,
     artistFromEvent: string
   ) => Promise<void>;
   updateImageAttributes: (
@@ -26,7 +26,7 @@ interface ImageStore {
 export const useImageStore = create<ImageStore>((set, get) => ({
   images: [],
   filteredImages: [],
-  size: "small" || "medium || large",
+  size: "medium",
   setImages: (newImages) => set({ images: newImages }),
 
   setFilteredImages: (newImages) => {
@@ -49,12 +49,11 @@ export const useImageStore = create<ImageStore>((set, get) => ({
   },
 
   // logic to handle images loaded for the user
-  handleImageUploaded: async (event, artistFromEvent: string) => {
-    const files = event.target.files;
+  handleImageUploaded: async (files: FileList, artistFromEvent: string) => {
     if (files && files.length > 0) {
       // Creating array to store promises for each images
       const imagesUploaded = Array.from(files).map(async (file, index) => {
-     console.log("artista de evento" , artistFromEvent)
+        console.log("artista de evento", artistFromEvent);
         if (file && file instanceof Blob) {
           // Reading the promise for each archive
           return new Promise<ImageItem>((resolve, reject) => {
@@ -123,7 +122,7 @@ export const useImageStore = create<ImageStore>((set, get) => ({
     }
   },
 
-   deleteImage: async (imageId) => {
+  deleteImage: async (imageId) => {
     try {
       await deleteImageFromDB(imageId);
 
@@ -133,7 +132,5 @@ export const useImageStore = create<ImageStore>((set, get) => ({
     } catch (error) {
       console.error("Error al eliminar la imagen de la base de datos:", error);
     }
-  }, 
-
-
+  },
 }));

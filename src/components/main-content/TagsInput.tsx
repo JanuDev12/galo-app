@@ -1,16 +1,7 @@
 import { useImageStore } from '@/store/image-store';
 import { useState } from 'react'
 import { WithContext as ReactTags } from "react-tag-input";
-
- 
-
-interface Tag {
-  id: string;
-  text: string;
-  className?: string
-}
-
-
+import type { Tag } from "../SingleTag";
 
 const TagsInput = ({ imageId }: { imageId: number }) => {
     const images = useImageStore((state) => state.images);
@@ -31,10 +22,11 @@ const TagsInput = ({ imageId }: { imageId: number }) => {
         console.error
       );
      }
+    
 
-     const handleAddition = (tag: { id: string; text: string }) => {
-      const newTags = [...tags, tag]
-      updateTags(newTags)
+     const handleAddition = (tag: Tag) => {
+       const newTags = [...tags, tag];
+       updateTags(newTags);
      };
 
     const handleDelete = (imageId: number) => {

@@ -1,4 +1,4 @@
-import { Collection } from "@/store/collections-store";
+import { Collection } from "@/type";
 import { openDB } from "idb";
 
 const DB_NAME = "collectionsDB";

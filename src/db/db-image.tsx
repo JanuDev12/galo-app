@@ -1,4 +1,4 @@
-import { ImageItem } from "@/store/image-store";
+import { ImageItem } from "@/type";
 import { openDB } from "idb";
 
 const DB_NAME = "imageDB"

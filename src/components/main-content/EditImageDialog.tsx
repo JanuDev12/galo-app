@@ -27,7 +27,7 @@ function EditImageDialog({ imageId, imageSrc, onDelete}: EditImageDialogProps) {
 
    const [selectedArtist, setSelectedArtist] = useState("")
 
-   const [newArtistName, setNewArtistName] = useState("");
+   const [newArtistName] = useState("");
 
    const handleSaveChanges = () => {
     const updatedImage = {

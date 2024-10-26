@@ -21,12 +21,12 @@ function ControlButtons({images, collectionId, isCollectionPage, }: ControlButto
   const setMaxColumnCount = useImageStore((state) => state.setSize);
 
   const originalImages = useImageStore((state) => state.images)
-  const collections = useCollectionStore((state) => state.collections)
+
 
   const [order, setOrder] = useState("date-c");
   const [sortBy, setSortBy] = useState("asc");
   const [media, setMedia] = useState("all-media");
-  const [layout, setLayout] = useState("masonry");
+
   const [size, setSize] = useState("medium");
 
   useEffect(() => {
@@ -190,10 +190,10 @@ const sortedImages = useMemo(() => {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="icon icon-tabler icons-tabler-outline icon-tabler-photo"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="icon icon-tabler icons-tabler-outline icon-tabler-photo"
               >
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                 <path d="M15 8h.01" />
@@ -272,10 +272,10 @@ const sortedImages = useMemo(() => {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-grid-3x3"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-grid-3x3"
               >
                 <rect width="18" height="18" x="3" y="3" rx="2" />
                 <path d="M3 9h18" />
@@ -293,10 +293,10 @@ const sortedImages = useMemo(() => {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-grid-2x2"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-grid-2x2"
               >
                 <rect width="18" height="18" x="3" y="3" rx="2" />
                 <path d="M3 12h18" />

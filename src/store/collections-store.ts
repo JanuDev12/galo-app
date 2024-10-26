@@ -22,7 +22,7 @@ interface CollectionStore {
   ) => Promise<void>;
   deleteCollection: (
     collectionId: number
-  ) => (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
+  )  => Promise<void>;
 }
 
 export const useCollectionStore = create<CollectionStore>((set, get) => ({
@@ -95,7 +95,7 @@ export const useCollectionStore = create<CollectionStore>((set, get) => ({
               name: image.name || "Unnamed Image",
               src: image.src || "",
               createdDate: collection.imagesCollected.length + 1, // Mantener el orden
-              lastModified: image.lastModified || new Date(),
+              lastModified: image.lastModified,
               artist: image.artist || "Unknown Artist",
               tags: image.tags || [],
               type: image.type,
